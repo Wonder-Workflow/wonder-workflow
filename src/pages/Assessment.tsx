@@ -3,7 +3,6 @@ import { BrandAvatar } from "../site/BrandLockup";
 import {
   ASSESSMENT_META,
   BOOKING_IFRAME_TITLE,
-  FIT_REVIEW_NAME,
   ONE_PATH_COPY,
 } from "../site/publicOffer";
 import { assessmentJsonLd, writeJsonLd } from "../site/jsonld";
@@ -517,7 +516,7 @@ export function LegacyAssessment() {
         setSaved(true);
         setResult({ submission, saved: true });
         setStatus(
-          `Your request was saved. Choose your complimentary ${FIT_REVIEW_NAME} when you are ready.`,
+          "Your request was saved. Choose your complimentary business operations review when you are ready.",
         );
       } finally {
         clearTimeout(timeout);
@@ -710,15 +709,16 @@ export function LegacyAssessment() {
                 </label>
               </fieldset>
               <p className="assessment-privacy">
-                Your contact details and answers help us prepare for your{" "}
-                {FIT_REVIEW_NAME}. This form does not sign you up for
+                Your contact details and answers help us prepare for your
+                business operations review. This form does not sign you up for
                 marketing or SMS. Please leave out passwords, client details and
                 other sensitive information.
               </p>
               <p className="assessment-small">
                 Your score is indicative, based on your answers. It is not a
                 validated diagnosis or an estimate of savings. During the
-                complimentary {FIT_REVIEW_NAME}, we {ONE_PATH_COPY.toLowerCase()}
+                complimentary business operations review, we{" "}
+                {ONE_PATH_COPY.toLowerCase()}
               </p>
               <button
                 className="assessment-button"
@@ -775,7 +775,7 @@ export function LegacyAssessment() {
             >
               <p className="assessment-eyebrow">Your next step</p>
               <h2 id="assessment-booking-title">
-                Book your {FIT_REVIEW_NAME}
+                Book a business operations review
               </h2>
               <p>Complimentary · 30 minutes</p>
               <p className="assessment-small">
@@ -826,11 +826,11 @@ export function LegacyAssessment() {
         </a>
         <a
           href="/start"
-          aria-label="Operations Fit Review (opens in a new tab)"
+          aria-label="Business operations review (opens in a new tab)"
           target="_blank"
           rel="noopener noreferrer"
         >
-          {FIT_REVIEW_NAME}
+          Business operations review
         </a>
       </footer>
     </div>

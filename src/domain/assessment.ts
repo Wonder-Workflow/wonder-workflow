@@ -351,7 +351,7 @@ const ASSESSMENT_RESULT_BANDS = [
     title: "Dialed",
     paragraphs: [
       "Your answers point to operations that are mostly clear.",
-      "If one sticky path still bothers you, you can book a complimentary 30-minute Fit Review (business operations review).",
+      "If one sticky path still bothers you, you can book a complimentary 30-minute business operations review.",
     ],
   },
   {
@@ -360,7 +360,7 @@ const ASSESSMENT_RESULT_BANDS = [
     title: "One process",
     paragraphs: [
       "At least one path of work needs tightening: intake, quotes, handoffs, invoices, or another repeating job that still waits on you.",
-      "A complimentary 30-minute Fit Review is a good place to name that path and the smallest fix worth trying first.",
+      "A complimentary 30-minute business operations review is a good place to name that path and the smallest fix worth trying first.",
     ],
   },
   {
@@ -369,7 +369,7 @@ const ASSESSMENT_RESULT_BANDS = [
     title: "Strong opportunity",
     paragraphs: [
       "Your answers point to several leaks across how work moves: status in more than one place, handoffs that drop details, or admin that rebuilds the day from scraps.",
-      "A complimentary 30-minute Fit Review can rank which leaks cost the most time and choose what to fix first.",
+      "A complimentary 30-minute business operations review can rank which leaks cost the most time and choose what to fix first.",
     ],
   },
   {
@@ -378,7 +378,7 @@ const ASSESSMENT_RESULT_BANDS = [
     title: "Full review",
     paragraphs: [
       "Your answers point to friction across much of the business, not only one step. Owner load, handoffs, and admin are likely tangled together.",
-      "A complimentary 30-minute Fit Review is the right next step: bring what is actually breaking, and we map where a deeper look should start.",
+      "A complimentary 30-minute business operations review is the right next step: bring what is actually breaking, and we map where a deeper look should start.",
     ],
   },
 ] as const;
