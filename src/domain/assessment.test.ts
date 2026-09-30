@@ -387,11 +387,11 @@ describe("assessment result bands", () => {
     expect(band.title).toBe(title);
     expect(band.paragraphs).toHaveLength(2);
     expect(band.paragraphs.join("\n")).not.toMatch(
-      /\u2014|Targeted Opportunity|High-Impact Opportunity/,
+      /\u2014|Targeted Opportunity|High-Impact Opportunity|do not need|don['’]t need|No pitch required|pick one revamp|Your answers point to one path/i,
     );
   });
 
-  it("uses Reed’s two-paragraph bodies for each band", () => {
+  it("uses the locked two-paragraph bodies for each band", () => {
     const dialed = assessmentResultBand(3);
     const oneProcess = assessmentResultBand(8);
     const strong = assessmentResultBand(14);
@@ -407,16 +407,16 @@ describe("assessment result bands", () => {
       ).size,
     ).toBe(4);
     expect(dialed.paragraphs).toEqual([
-      "Your answers point to operations that are mostly clear. You probably do not need outside help right now.",
-      "If one sticky path still bothers you, you can book a complimentary 30-minute Fit Review (business operations review). No pitch required.",
+      "Your answers point to operations that are mostly clear.",
+      "If one sticky path still bothers you, you can book a complimentary 30-minute Fit Review (business operations review).",
     ]);
     expect(oneProcess.paragraphs).toEqual([
-      "Your answers point to one path of work that needs tightening: intake, quotes, handoffs, invoices, or another repeating job that still waits on you.",
+      "At least one path of work needs tightening: intake, quotes, handoffs, invoices, or another repeating job that still waits on you.",
       "A complimentary 30-minute Fit Review is a good place to name that path and the smallest fix worth trying first.",
     ]);
     expect(strong.paragraphs).toEqual([
       "Your answers point to several leaks across how work moves: status in more than one place, handoffs that drop details, or admin that rebuilds the day from scraps.",
-      "A complimentary 30-minute Fit Review can rank which leaks cost the most time and pick one revamp to start with.",
+      "A complimentary 30-minute Fit Review can rank which leaks cost the most time and choose what to fix first.",
     ]);
     expect(full.paragraphs).toEqual([
       "Your answers point to friction across much of the business, not only one step. Owner load, handoffs, and admin are likely tangled together.",
