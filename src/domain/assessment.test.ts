@@ -369,9 +369,6 @@ describe("canonical assessment scoring and validation", () => {
 });
 
 describe("assessment result bands", () => {
-  const forbidden =
-    /don['’]t need|do not need|no pitch required|pick one revamp|targeted opportunity|high-impact/i;
-
   it.each([
     [0, "Dialed"],
     [3, "Dialed"],
@@ -388,10 +385,13 @@ describe("assessment result bands", () => {
   ] as const)("maps score %s to %s", (score, title) => {
     const band = assessmentResultBand(score);
     expect(band.title).toBe(title);
-    expect(band.paragraphs.join(" ")).not.toMatch(forbidden);
+    expect(band.paragraphs).toHaveLength(2);
+    expect(band.paragraphs.join("\n")).not.toMatch(
+      /\u2014|Targeted Opportunity|High-Impact Opportunity/,
+    );
   });
 
-  it("uses distinct titles and bodies, with Dialed, One process, and Strong opportunity paste copy", () => {
+  it("uses Reed’s two-paragraph bodies for each band", () => {
     const dialed = assessmentResultBand(3);
     const oneProcess = assessmentResultBand(8);
     const strong = assessmentResultBand(14);
@@ -407,19 +407,20 @@ describe("assessment result bands", () => {
       ).size,
     ).toBe(4);
     expect(dialed.paragraphs).toEqual([
-      "Your answers point to operations that are mostly clear.",
-      "If one sticky path still bothers you, you can book a complimentary 30-minute Fit Review (business operations review).",
+      "Your answers point to operations that are mostly clear. You probably do not need outside help right now.",
+      "If one sticky path still bothers you, you can book a complimentary 30-minute Fit Review (business operations review). No pitch required.",
     ]);
     expect(oneProcess.paragraphs).toEqual([
-      "At least one path of work needs tightening: intake, quotes, handoffs, invoices, or another repeating job that still waits on you.",
+      "Your answers point to one path of work that needs tightening: intake, quotes, handoffs, invoices, or another repeating job that still waits on you.",
       "A complimentary 30-minute Fit Review is a good place to name that path and the smallest fix worth trying first.",
     ]);
     expect(strong.paragraphs).toEqual([
       "Your answers point to several leaks across how work moves: status in more than one place, handoffs that drop details, or admin that rebuilds the day from scraps.",
-      "A complimentary 30-minute Fit Review can rank which leaks cost the most time and choose what to fix first.",
+      "A complimentary 30-minute Fit Review can rank which leaks cost the most time and pick one revamp to start with.",
     ]);
     expect(full.paragraphs).toEqual([
-      "Your answers point to friction across much of the business, not only one step. Owner load, handoffs, and admin are likely tangled together. A complimentary 30-minute Fit Review is the right next step: bring what is actually breaking, and we map where a deeper look should start.",
+      "Your answers point to friction across much of the business, not only one step. Owner load, handoffs, and admin are likely tangled together.",
+      "A complimentary 30-minute Fit Review is the right next step: bring what is actually breaking, and we map where a deeper look should start.",
     ]);
     expect(ASSESSMENT_RESULT_DISCLAIMER).toBe(
       "This score is indicative, not a diagnosis or a savings guarantee. It reflects your answers about how work moves today (invoices, inventory, handoffs, and owner load). It is not a recommendation to buy services.",
@@ -784,6 +785,20 @@ describe("retained legacy assessment save boundary (not publicly routed)", () =>
     for (const paragraph of fullReview.paragraphs)
       expect(screen.getByText(paragraph)).toBeVisible();
     expect(screen.getByText(ASSESSMENT_RESULT_DISCLAIMER)).toBeVisible();
+    const resultText =
+      screen.getByRole("region", { name: "Assessment result" }).textContent ??
+      "";
+    const order = [
+      "21 / 21",
+      fullReview.title,
+      ...fullReview.paragraphs,
+      ASSESSMENT_RESULT_DISCLAIMER,
+    ].map((part) => resultText.indexOf(part));
+    expect(order.every((index) => index >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    expect(resultText.indexOf(ASSESSMENT_RESULT_DISCLAIMER)).toBeLessThan(
+      resultText.indexOf("Book your Operations Fit Review"),
+    );
     expect(screen.queryByText("High-Impact Opportunity")).not.toBeInTheDocument();
     expect(screen.queryByRole("form")).not.toBeInTheDocument();
     expect(

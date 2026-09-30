@@ -48,6 +48,17 @@ describe("public browser-only assessment", () => {
       for (const paragraph of band.paragraphs)
         expect(screen.getByText(paragraph)).toBeVisible();
       expect(screen.getByText(ASSESSMENT_RESULT_DISCLAIMER)).toBeVisible();
+      const resultText =
+        screen.getByRole("region", { name: "Assessment result" }).textContent ??
+        "";
+      const order = [
+        `${expected.score} / ${expected.max_score}`,
+        band.title,
+        ...band.paragraphs,
+        ASSESSMENT_RESULT_DISCLAIMER,
+      ].map((part) => resultText.indexOf(part));
+      expect(order.every((index) => index >= 0)).toBe(true);
+      expect([...order].sort((a, b) => a - b)).toEqual(order);
       expect(screen.queryByText(expected.tier)).not.toBeInTheDocument();
       expect(
         screen.getByText(

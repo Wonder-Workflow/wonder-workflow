@@ -350,8 +350,8 @@ const ASSESSMENT_RESULT_BANDS = [
     max: 5,
     title: "Dialed",
     paragraphs: [
-      "Your answers point to operations that are mostly clear.",
-      "If one sticky path still bothers you, you can book a complimentary 30-minute Fit Review (business operations review).",
+      "Your answers point to operations that are mostly clear. You probably do not need outside help right now.",
+      "If one sticky path still bothers you, you can book a complimentary 30-minute Fit Review (business operations review). No pitch required.",
     ],
   },
   {
@@ -359,7 +359,7 @@ const ASSESSMENT_RESULT_BANDS = [
     max: 11,
     title: "One process",
     paragraphs: [
-      "At least one path of work needs tightening: intake, quotes, handoffs, invoices, or another repeating job that still waits on you.",
+      "Your answers point to one path of work that needs tightening: intake, quotes, handoffs, invoices, or another repeating job that still waits on you.",
       "A complimentary 30-minute Fit Review is a good place to name that path and the smallest fix worth trying first.",
     ],
   },
@@ -369,7 +369,7 @@ const ASSESSMENT_RESULT_BANDS = [
     title: "Strong opportunity",
     paragraphs: [
       "Your answers point to several leaks across how work moves: status in more than one place, handoffs that drop details, or admin that rebuilds the day from scraps.",
-      "A complimentary 30-minute Fit Review can rank which leaks cost the most time and choose what to fix first.",
+      "A complimentary 30-minute Fit Review can rank which leaks cost the most time and pick one revamp to start with.",
     ],
   },
   {
@@ -377,7 +377,8 @@ const ASSESSMENT_RESULT_BANDS = [
     max: 21,
     title: "Full review",
     paragraphs: [
-      "Your answers point to friction across much of the business, not only one step. Owner load, handoffs, and admin are likely tangled together. A complimentary 30-minute Fit Review is the right next step: bring what is actually breaking, and we map where a deeper look should start.",
+      "Your answers point to friction across much of the business, not only one step. Owner load, handoffs, and admin are likely tangled together.",
+      "A complimentary 30-minute Fit Review is the right next step: bring what is actually breaking, and we map where a deeper look should start.",
     ],
   },
 ] as const;
