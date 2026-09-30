@@ -38,7 +38,10 @@ describe("technical SEO for the brand pack PR", () => {
   it("assessment JSON-LD is a light HowTo and is written on the public path", () => {
     const json = graphTypes("/assessment");
     expect(json).toContain('"@type":"HowTo"');
-    expect(json).toContain("Operations Fit Review");
+    expect(json).toContain("Book a business operations review");
+    expect(json).toContain(
+      "Book a complimentary 30-minute business operations review on the calendar.",
+    );
     render(<LegacyAssessment />);
     expect(
       document.querySelector("#ww-structured-data")?.textContent,

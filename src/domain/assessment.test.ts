@@ -1,4 +1,6 @@
 import { createElement } from "react";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
   cleanup,
   fireEvent,
@@ -10,11 +12,20 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   ASSESSMENT_BOOKING_URL,
   ASSESSMENT_VERSION,
+  ASSESSMENT_SUBMIT_LABEL,
+  GHL_ASSESSMENT_Q_FIELDS,
   LEGACY_ASSESSMENT_VERSION,
   ORIGINAL_ASSESSMENT_QUESTIONS,
   QUESTIONS,
   CONTACT_LABELS,
+  INDUSTRY_OPTIONS,
+  TEAM_SIZE_OPTIONS,
+  PRIORITY_OPTIONS,
   assessmentScore,
+  assessmentResultBand,
+  ASSESSMENT_RESULT_DISCLAIMER,
+  answerScore,
+  assessmentQuestions,
   buildAssessmentSubmission,
   parseAssessmentSubmission,
   toAssessmentIntake,
@@ -33,9 +44,9 @@ const contact: AssessmentContact = {
   last_name: "Example",
   email: "taylor@example.test",
   company: "Fictional Workshop",
-  team_size: "6–20 people",
+  team_size: "6–20",
   industry: "Construction / trades",
-  operational_priority: "Reduce repetitive admin",
+  operational_priority: "Catch work that waits on me",
   phone: "+1 555 010 2020",
   website: "example.test",
   role: "Owner",
@@ -50,14 +61,21 @@ const booking: AssessmentBooking = {
   bookingStatus: "confirmed",
   updatedAt: "2026-09-05T13:00:00Z",
 };
-const answers = (value = 3) =>
-  Object.fromEntries(QUESTIONS.map((question) => [question.key, value]));
+const answers = (
+  value = 3,
+  version:
+    | typeof ASSESSMENT_VERSION
+    | typeof LEGACY_ASSESSMENT_VERSION = ASSESSMENT_VERSION,
+) =>
+  Object.fromEntries(
+    assessmentQuestions(version).map((question) => [question.key, value]),
+  );
 const submission = (
   version:
     | typeof ASSESSMENT_VERSION
     | typeof LEGACY_ASSESSMENT_VERSION = ASSESSMENT_VERSION,
 ): AssessmentSubmission =>
-  buildAssessmentSubmission(contact, answers(), {
+  buildAssessmentSubmission(contact, answers(3, version), {
     submissionId: "submission-test",
     submittedAt: "2026-09-05T12:00:00Z",
     version,
@@ -73,11 +91,106 @@ afterEach(() => {
 });
 
 describe("canonical assessment scoring and validation", () => {
-  it("keeps the six original questions and adds a distinct seventh question", () => {
-    expect(QUESTIONS.slice(0, 6)).toEqual(ORIGINAL_ASSESSMENT_QUESTIONS);
+  it("ships v1-22 keys, copy, contact lists, and submit label", () => {
+    expect(ASSESSMENT_VERSION).toBe("wonder-workflow-operations-v1-22");
+    expect(ASSESSMENT_SUBMIT_LABEL).toBe("See my operations score");
+    expect(ASSESSMENT_SUBMIT_LABEL).not.toMatch(/AI Operations/i);
+    expect(QUESTIONS.map((question) => question.key)).toEqual([
+      "admin_time",
+      "owner_bottleneck",
+      "things_go_missing",
+      "role_handoffs",
+      "duplicate_entry",
+      "process_repeatability",
+      "friction_home",
+    ]);
     expect(QUESTIONS).toHaveLength(7);
-    expect(QUESTIONS[6].key).toBe("software_overlap");
-    expect(assessmentScore(answers(0))).toEqual({
+    expect(QUESTIONS[0].label).toBe(
+      "How many hours a week does repetitive admin eat?",
+    );
+    expect(QUESTIONS[0].helper).toMatch(/scheduling, invoices, inventory counts/);
+    expect(INDUSTRY_OPTIONS).toEqual([
+      "Hospitality (restaurants, bars, hotels, catering)",
+      "Retail",
+      "Construction / trades",
+      "Field / home services (cleaning, landscaping, detailing, restoration, moving)",
+      "Signs / print / production",
+      "Professional services",
+      "Other",
+    ]);
+    expect(INDUSTRY_OPTIONS).not.toEqual(
+      expect.arrayContaining(["Healthcare / wellness"]),
+    );
+    expect(TEAM_SIZE_OPTIONS).toEqual(["Just me", "2–5", "6–20", "21–50", "51+"]);
+    expect(PRIORITY_OPTIONS[0]).toBe("Catch work that waits on me");
+    expect(PRIORITY_OPTIONS).toContain(
+      "Stop things going missing (invoices, inventory, records)",
+    );
+    const assessmentUi = readFileSync(
+      join(process.cwd(), "src/pages/Assessment.tsx"),
+      "utf8",
+    );
+    const domain = readFileSync(
+      join(process.cwd(), "src/domain/assessment.ts"),
+      "utf8",
+    );
+    expect(assessmentUi).not.toContain("Get My AI Operations Score");
+    expect(assessmentUi).not.toMatch(/AI Operations/);
+    expect(domain).not.toContain("Healthcare / wellness");
+    expect(domain).not.toContain("wonder-workflow-operations-v1-21");
+  });
+
+  it("keeps Casey’s positional GHL q1–q7 fields and puts semantic ids in answers JSON", () => {
+    expect(GHL_ASSESSMENT_Q_FIELDS.map((field) => field.field)).toEqual([
+      "ww_assessment_q1",
+      "ww_assessment_q2",
+      "ww_assessment_q3",
+      "ww_assessment_q4",
+      "ww_assessment_q5",
+      "ww_assessment_q6",
+      "ww_assessment_q7",
+    ]);
+    expect(GHL_ASSESSMENT_Q_FIELDS.map((field) => field.key)).toEqual(
+      QUESTIONS.map((question) => question.key),
+    );
+    expect(GHL_ASSESSMENT_Q_FIELDS.map((field) => field.previousKey)).toEqual([
+      "admin_time",
+      "routine_drafting",
+      "document_processing",
+      "information_access",
+      "duplicate_entry",
+      "process_repeatability",
+      "software_overlap",
+    ]);
+    const posted = submission();
+    expect(posted.assessment_version).toBe(
+      "wonder-workflow-operations-v1-22",
+    );
+    expect(posted.answers.map((answer) => answer.key)).toEqual(
+      GHL_ASSESSMENT_Q_FIELDS.map((field) => field.key),
+    );
+    expect(posted.contact.industry).toBe("Construction / trades");
+    expect(posted.contact.operational_priority).toBe(
+      "Catch work that waits on me",
+    );
+    expect(JSON.stringify(posted.answers)).toContain("owner_bottleneck");
+    expect(JSON.stringify(posted.answers)).not.toContain("ww_assessment_q");
+  });
+
+  it("keeps 0–3 ordinal scoring for six questions and remaps categorical Q7", () => {
+    expect(QUESTIONS.slice(0, 6)).not.toEqual(ORIGINAL_ASSESSMENT_QUESTIONS);
+    expect(assessmentQuestions(LEGACY_ASSESSMENT_VERSION)).toEqual(
+      ORIGINAL_ASSESSMENT_QUESTIONS,
+    );
+    expect(QUESTIONS).toHaveLength(7);
+    expect(QUESTIONS[6].key).toBe("friction_home");
+    expect(answerScore(QUESTIONS[6], 7)).toBe(0);
+    expect(answerScore(QUESTIONS[6], 0)).toBe(3);
+    const unsure = {
+      ...answers(0),
+      friction_home: 7,
+    };
+    expect(assessmentScore(unsure)).toEqual({
       score: 0,
       max_score: 21,
       tier: "Targeted Opportunity",
@@ -87,16 +200,26 @@ describe("canonical assessment scoring and validation", () => {
       max_score: 21,
       tier: "High-Impact Opportunity",
     });
-    expect(assessmentScore(answers(1))).toEqual({
-      score: 7,
+    const mid = {
+      ...answers(1),
+      friction_home: 7,
+    };
+    expect(assessmentScore(mid)).toEqual({
+      score: 6,
       max_score: 21,
       tier: "Targeted Opportunity",
     });
     expect(assessmentScore(answers(2))).toEqual({
-      score: 14,
+      score: 15,
       max_score: 21,
-      tier: "Strong Opportunity",
+      tier: "High-Impact Opportunity",
     });
+    expect(
+      buildAssessmentSubmission(contact, { ...answers(3), friction_home: 7 }, {
+        submissionId: "submission-unsure",
+        submittedAt: "2026-09-05T12:00:00Z",
+      }).score,
+    ).toBe(18);
   });
 
   it("preserves original six-question scores and thresholds without rescaling", () => {
@@ -104,10 +227,10 @@ describe("canonical assessment scoring and validation", () => {
     expect(legacy.answers).toHaveLength(6);
     expect(legacy.score).toBe(18);
     expect(legacy.max_score).toBe(18);
-    expect(assessmentScore(answers(1), LEGACY_ASSESSMENT_VERSION).tier).toBe(
+    expect(assessmentScore(answers(1, LEGACY_ASSESSMENT_VERSION), LEGACY_ASSESSMENT_VERSION).tier).toBe(
       "Targeted Opportunity",
     );
-    expect(assessmentScore(answers(2), LEGACY_ASSESSMENT_VERSION).tier).toBe(
+    expect(assessmentScore(answers(2, LEGACY_ASSESSMENT_VERSION), LEGACY_ASSESSMENT_VERSION).tier).toBe(
       "Strong Opportunity",
     );
     expect(parseAssessmentSubmission(JSON.stringify(legacy))).toEqual(legacy);
@@ -245,6 +368,84 @@ describe("canonical assessment scoring and validation", () => {
   });
 });
 
+describe("assessment result bands", () => {
+  it.each([
+    [0, "Dialed"],
+    [3, "Dialed"],
+    [5, "Dialed"],
+    [6, "One process"],
+    [8, "One process"],
+    [11, "One process"],
+    [12, "Strong opportunity"],
+    [14, "Strong opportunity"],
+    [16, "Strong opportunity"],
+    [17, "Full review"],
+    [19, "Full review"],
+    [21, "Full review"],
+  ] as const)("maps score %s to %s", (score, title) => {
+    const band = assessmentResultBand(score);
+    expect(band.title).toBe(title);
+    expect(band.paragraphs).toHaveLength(2);
+    expect(band.paragraphs.join("\n")).not.toMatch(
+      /\u2014|Targeted Opportunity|High-Impact Opportunity|do not need|don['’]t need|No pitch required|pick one revamp|Your answers point to one path/i,
+    );
+  });
+
+  it("uses the locked two-paragraph bodies for each band", () => {
+    const dialed = assessmentResultBand(3);
+    const oneProcess = assessmentResultBand(8);
+    const strong = assessmentResultBand(14);
+    const full = assessmentResultBand(19);
+    expect(
+      new Set([dialed.title, oneProcess.title, strong.title, full.title]).size,
+    ).toBe(4);
+    expect(
+      new Set(
+        [dialed, oneProcess, strong, full].map((band) =>
+          band.paragraphs.join("\n"),
+        ),
+      ).size,
+    ).toBe(4);
+    expect(dialed.paragraphs).toEqual([
+      "Your answers point to operations that are mostly clear.",
+      "If one sticky path still bothers you, you can book a complimentary 30-minute business operations review.",
+    ]);
+    expect(oneProcess.paragraphs).toEqual([
+      "At least one path of work needs tightening: intake, quotes, handoffs, invoices, or another repeating job that still waits on you.",
+      "A complimentary 30-minute business operations review is a good place to name that path and the smallest fix worth trying first.",
+    ]);
+    expect(strong.paragraphs).toEqual([
+      "Your answers point to several leaks across how work moves: status in more than one place, handoffs that drop details, or admin that rebuilds the day from scraps.",
+      "A complimentary 30-minute business operations review can rank which leaks cost the most time and choose what to fix first.",
+    ]);
+    expect(full.paragraphs).toEqual([
+      "Your answers point to friction across much of the business, not only one step. Owner load, handoffs, and admin are likely tangled together.",
+      "A complimentary 30-minute business operations review is the right next step: bring what is actually breaking, and we map where a deeper look should start.",
+    ]);
+    expect(ASSESSMENT_RESULT_DISCLAIMER).toBe(
+      "This score is indicative, not a diagnosis or a savings guarantee. It reflects your answers about how work moves today (invoices, inventory, handoffs, and owner load). It is not a recommendation to buy services.",
+    );
+  });
+
+  it.each([-1, 22, 1.5, Number.NaN])(
+    "rejects out-of-range score %s",
+    (score) => {
+      expect(() => assessmentResultBand(score)).toThrow(/0 to 21/);
+    },
+  );
+
+  it("keeps band edges at 0, 5, 6, 11, 12, 16, 17, and 21", () => {
+    expect(assessmentResultBand(0).title).toBe("Dialed");
+    expect(assessmentResultBand(5).title).toBe("Dialed");
+    expect(assessmentResultBand(6).title).toBe("One process");
+    expect(assessmentResultBand(11).title).toBe("One process");
+    expect(assessmentResultBand(12).title).toBe("Strong opportunity");
+    expect(assessmentResultBand(16).title).toBe("Strong opportunity");
+    expect(assessmentResultBand(17).title).toBe("Full review");
+    expect(assessmentResultBand(21).title).toBe("Full review");
+  });
+});
+
 describe("assessment-to-audit adapter", () => {
   it("retains every answer, range, context field, original score and attribution", () => {
     const original = submission();
@@ -268,7 +469,7 @@ describe("assessment-to-audit adapter", () => {
       );
     expect(
       retained.find((item) => item.id === "context.team_size")!.value,
-    ).toBe("6–20 people");
+    ).toBe("6–20");
     expect(retained.find((item) => item.id === "admin_time")!.value).toBe(
       "More than 10 hours",
     );
@@ -357,13 +558,20 @@ describe("assessment-to-audit adapter", () => {
     const original = submission();
     original.contact.current_tools = "";
     original.contact.bottleneck_details = "";
-    original.answers = original.answers.map((answer) => ({
-      ...answer,
-      value: answer.key === "software_overlap" ? 3 : 0,
-      label: QUESTIONS.find((question) => question.key === answer.key)!.options[
-        answer.key === "software_overlap" ? 3 : 0
-      ],
-    }));
+    original.answers = original.answers.map((answer) => {
+      const question = QUESTIONS.find((item) => item.key === answer.key)!;
+      const value =
+        answer.key === "owner_bottleneck"
+          ? 3
+          : answer.key === "friction_home"
+            ? 7
+            : 0;
+      return {
+        ...answer,
+        value,
+        label: question.options[value]!,
+      };
+    });
     Object.assign(
       original,
       assessmentScore(
@@ -374,7 +582,7 @@ describe("assessment-to-audit adapter", () => {
     );
     const prep = buildAssessmentPrepQuestions(original);
     expect(prep).toContain(
-      "Which subscriptions overlap, what does each cost, and which capabilities are still required?",
+      "What work waits on you personally, and what would let it move without you?",
     );
     expect(prep.some((question) => question.includes("typical week"))).toBe(
       true,
@@ -518,7 +726,7 @@ describe("retained legacy assessment save boundary (not publicly routed)", () =>
     expect(screen.getByRole("banner")).toHaveTextContent("Wonder & Workflow");
     await fillPublicAssessment();
     fireEvent.click(
-      screen.getByRole("button", { name: "Get My AI Operations Score" }),
+      screen.getByRole("button", { name: ASSESSMENT_SUBMIT_LABEL }),
     );
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "We can’t save your assessment right now.",
@@ -554,7 +762,7 @@ describe("retained legacy assessment save boundary (not publicly routed)", () =>
     await screen.findByRole("heading", { name: QUESTIONS[0].label });
     await fillPublicAssessment();
     fireEvent.click(
-      screen.getByRole("button", { name: "Get My AI Operations Score" }),
+      screen.getByRole("button", { name: ASSESSMENT_SUBMIT_LABEL }),
     );
     await screen.findByRole("button", { name: "Retry Original Request" });
     expect(screen.getByLabelText("First name", { exact: true })).toBeDisabled();
@@ -572,6 +780,26 @@ describe("retained legacy assessment save boundary (not publicly routed)", () =>
       screen.getByRole("button", { name: "Retry Original Request" }),
     );
     await screen.findByRole("heading", { name: "21 / 21" });
+    const fullReview = assessmentResultBand(21);
+    expect(screen.getByText(fullReview.title)).toBeVisible();
+    for (const paragraph of fullReview.paragraphs)
+      expect(screen.getByText(paragraph)).toBeVisible();
+    expect(screen.getByText(ASSESSMENT_RESULT_DISCLAIMER)).toBeVisible();
+    const resultText =
+      screen.getByRole("region", { name: "Assessment result" }).textContent ??
+      "";
+    const order = [
+      "21 / 21",
+      fullReview.title,
+      ...fullReview.paragraphs,
+      ASSESSMENT_RESULT_DISCLAIMER,
+    ].map((part) => resultText.indexOf(part));
+    expect(order.every((index) => index >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    expect(resultText.indexOf(ASSESSMENT_RESULT_DISCLAIMER)).toBeLessThan(
+      resultText.indexOf("Book a business operations review"),
+    );
+    expect(screen.queryByText("High-Impact Opportunity")).not.toBeInTheDocument();
     expect(screen.queryByRole("form")).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Back" }),
@@ -584,7 +812,7 @@ describe("retained legacy assessment save boundary (not publicly routed)", () =>
     );
     expect(
       screen.getByTitle(
-        "Book your complimentary 30-minute Operations Fit Review",
+        "Book a complimentary 30-minute business operations review",
       ),
     ).toHaveAttribute("src", ASSESSMENT_BOOKING_URL);
   });
@@ -609,7 +837,7 @@ describe("retained legacy assessment save boundary (not publicly routed)", () =>
     await screen.findByRole("heading", { name: QUESTIONS[0].label });
     await fillPublicAssessment();
     fireEvent.click(
-      screen.getByRole("button", { name: "Get My AI Operations Score" }),
+      screen.getByRole("button", { name: ASSESSMENT_SUBMIT_LABEL }),
     );
     await screen.findByRole("button", { name: "Retry Original Request" });
     expect(

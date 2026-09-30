@@ -77,7 +77,7 @@ export const FOOTER_BLURB =
 export const LADDER_NOTE =
   "Next: complimentary Operations Fit Review. Then a paid diagnostic scoped after the review, then implementation, then optional support. Software and vendor costs stay separate.";
 export const BOOKING_IFRAME_TITLE =
-  "Book your complimentary 30-minute Operations Fit Review";
+  "Book a complimentary 30-minute business operations review";
 export const ONE_PATH_COPY =
   "Walk one real path of work, then pick one improvement.";
 export const BRAND_ACCENT = "#7BA1AF";

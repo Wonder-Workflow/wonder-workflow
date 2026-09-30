@@ -1,7 +1,12 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import Assessment, { LegacyAssessment } from "./Assessment";
-import { assessmentScore, QUESTIONS } from "../domain/assessment";
+import {
+  assessmentResultBand,
+  assessmentScore,
+  ASSESSMENT_RESULT_DISCLAIMER,
+  QUESTIONS,
+} from "../domain/assessment";
 
 describe("public browser-only assessment", () => {
   const request = vi.fn();
@@ -23,7 +28,7 @@ describe("public browser-only assessment", () => {
     act(() => vi.advanceTimersByTime(301));
   }
   it.each([0, 1, 2, 3])(
-    "uses all seven original questions and existing score/tier for option %i",
+    "uses all seven original questions and the score band for option %i",
     (value) => {
       const { container } = render(<Assessment />);
       const answers: Record<string, number> = {};
@@ -35,10 +40,26 @@ describe("public browser-only assessment", () => {
         answer(value);
       }
       const expected = assessmentScore(answers);
+      const band = assessmentResultBand(expected.score);
       expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
         `${expected.score} / ${expected.max_score}`,
       );
-      expect(screen.getByText(expected.tier)).toBeVisible();
+      expect(screen.getByText(band.title)).toBeVisible();
+      for (const paragraph of band.paragraphs)
+        expect(screen.getByText(paragraph)).toBeVisible();
+      expect(screen.getByText(ASSESSMENT_RESULT_DISCLAIMER)).toBeVisible();
+      const resultText =
+        screen.getByRole("region", { name: "Assessment result" }).textContent ??
+        "";
+      const order = [
+        `${expected.score} / ${expected.max_score}`,
+        band.title,
+        ...band.paragraphs,
+        ASSESSMENT_RESULT_DISCLAIMER,
+      ].map((part) => resultText.indexOf(part));
+      expect(order.every((index) => index >= 0)).toBe(true);
+      expect([...order].sort((a, b) => a - b)).toEqual(order);
+      expect(screen.queryByText(expected.tier)).not.toBeInTheDocument();
       expect(
         screen.getByText(
           "Your answers stay in this browser tab. Share your result when you contact us.",
@@ -58,7 +79,7 @@ describe("public browser-only assessment", () => {
       expect(request).not.toHaveBeenCalled();
       expect(
         screen.queryByText(
-          /assessment is saved|preview|book your Operations Fit Review/i,
+          /assessment is saved|preview|book a business operations review/i,
         ),
       ).not.toBeInTheDocument();
     },
@@ -79,7 +100,9 @@ describe("public browser-only assessment", () => {
     expect(
       screen.getByRole("button", { name: QUESTIONS[0].options[0] }),
     ).toHaveAttribute("aria-pressed", "true");
-    for (let index = 0; index < QUESTIONS.length; index++) answer(0);
+    for (let index = 0; index < QUESTIONS.length; index++) {
+      answer(QUESTIONS[index].key === "friction_home" ? 7 : 0);
+    }
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "0 / 21",
     );

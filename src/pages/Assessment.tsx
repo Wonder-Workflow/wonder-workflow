@@ -3,15 +3,17 @@ import { BrandAvatar } from "../site/BrandLockup";
 import {
   ASSESSMENT_META,
   BOOKING_IFRAME_TITLE,
-  FIT_REVIEW_NAME,
   ONE_PATH_COPY,
 } from "../site/publicOffer";
 import { assessmentJsonLd, writeJsonLd } from "../site/jsonld";
 import {
   ASSESSMENT_BOOKING_URL,
   ASSESSMENT_PHONE_HINT,
+  ASSESSMENT_SUBMIT_LABEL,
   validAssessmentPhone,
+  assessmentResultBand,
   assessmentScore,
+  ASSESSMENT_RESULT_DISCLAIMER,
   QUESTIONS,
   CONTACT_LABELS,
   TEAM_SIZE_OPTIONS,
@@ -20,9 +22,30 @@ import {
   buildAssessmentSubmission,
   readAssessmentAttribution,
   type AssessmentContact,
+  type AssessmentQuestion,
   type AssessmentSubmission,
 } from "../domain/assessment";
 import "./assessment.css";
+
+function questionHelper(step: number) {
+  const question: AssessmentQuestion = QUESTIONS[step];
+  return question.helper ? ` ${question.helper}` : "";
+}
+
+function ResultBand({ score }: { score: number }) {
+  const band = assessmentResultBand(score);
+  return (
+    <>
+      <p>
+        <strong>{band.title}</strong>
+      </p>
+      {band.paragraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <p className="assessment-small">{ASSESSMENT_RESULT_DISCLAIMER}</p>
+    </>
+  );
+}
 
 const blankContact = () =>
   Object.fromEntries(
@@ -114,6 +137,7 @@ export function Assessment() {
             <p className="assessment-section-copy">
               Choose the answer closest to your current situation. Selecting an
               answer continues to the next step.
+              {questionHelper(step)}
             </p>
             <div className="assessment-options">
               {QUESTIONS[step].options.map((label, value) => (
@@ -147,19 +171,12 @@ export function Assessment() {
             aria-label="Assessment result"
           >
             <p className="assessment-eyebrow">
-              Your indicative AI operations score
+              Your indicative operations score
             </p>
             <h1 className="assessment-score" ref={heading} tabIndex={-1}>
               {score.score} / {score.max_score}
             </h1>
-            <p>
-              <strong>{score.tier}</strong>
-            </p>
-            <p>
-              This score reflects your answers. It is not an independent
-              diagnosis, a recommendation to buy services, or proof of potential
-              savings.
-            </p>
+            <ResultBand score={score.score} />
             <p>
               Your answers stay in this browser tab. Share your result when you
               contact us.
@@ -499,7 +516,7 @@ export function LegacyAssessment() {
         setSaved(true);
         setResult({ submission, saved: true });
         setStatus(
-          `Your request was saved. Choose your complimentary ${FIT_REVIEW_NAME} when you are ready.`,
+          "Your request was saved. Choose your complimentary business operations review when you are ready.",
         );
       } finally {
         clearTimeout(timeout);
@@ -557,6 +574,7 @@ export function LegacyAssessment() {
             <p className="assessment-section-copy">
               Choose the answer closest to your current situation. Selecting an
               answer continues to the next step.
+              {questionHelper(step)}
             </p>
             <div className="assessment-options">
               {QUESTIONS[step].options.map((label, value) => (
@@ -671,7 +689,7 @@ export function LegacyAssessment() {
                         maxLength: 2000,
                         wide: true,
                         placeholder:
-                          "Describe the process. Please leave out passwords, client details and other sensitive information.",
+                          "Restaurant invoices, inventory walking off, missed handoffs, or anything else. Please leave out passwords, client details and other sensitive information.",
                       })}
                     </div>
                   </details>
@@ -691,15 +709,16 @@ export function LegacyAssessment() {
                 </label>
               </fieldset>
               <p className="assessment-privacy">
-                Your contact details and answers help us prepare for your{" "}
-                {FIT_REVIEW_NAME}. This form does not sign you up for
+                Your contact details and answers help us prepare for your
+                business operations review. This form does not sign you up for
                 marketing or SMS. Please leave out passwords, client details and
                 other sensitive information.
               </p>
               <p className="assessment-small">
                 Your score is indicative, based on your answers. It is not a
                 validated diagnosis or an estimate of savings. During the
-                complimentary {FIT_REVIEW_NAME}, we {ONE_PATH_COPY.toLowerCase()}
+                complimentary business operations review, we{" "}
+                {ONE_PATH_COPY.toLowerCase()}
               </p>
               <button
                 className="assessment-button"
@@ -714,7 +733,7 @@ export function LegacyAssessment() {
                       ? "Retry Original Request"
                       : accepting === null
                         ? "Checking availability…"
-                        : "Get My AI Operations Score"}
+                        : ASSESSMENT_SUBMIT_LABEL}
               </button>
               <button
                 className="assessment-back"
@@ -745,16 +764,10 @@ export function LegacyAssessment() {
             <h1 className="assessment-score" ref={stepHeading} tabIndex={-1}>
               {result.submission.score} / {result.submission.max_score}
             </h1>
-            <p>
-              <strong>{result.submission.tier}</strong>
-            </p>
+            <ResultBand score={result.submission.score} />
             <p>
               Your assessment is saved. Choose a time below to discuss your
               results. {ONE_PATH_COPY}
-            </p>
-            <p className="assessment-small">
-              This score is based on your answers. We’ll explore what it means
-              for your business during your review.
             </p>
             <section
               className="assessment-booking"
@@ -762,7 +775,7 @@ export function LegacyAssessment() {
             >
               <p className="assessment-eyebrow">Your next step</p>
               <h2 id="assessment-booking-title">
-                Book your {FIT_REVIEW_NAME}
+                Book a business operations review
               </h2>
               <p>Complimentary · 30 minutes</p>
               <p className="assessment-small">
@@ -813,11 +826,11 @@ export function LegacyAssessment() {
         </a>
         <a
           href="/start"
-          aria-label="Operations Fit Review (opens in a new tab)"
+          aria-label="Business operations review (opens in a new tab)"
           target="_blank"
           rel="noopener noreferrer"
         >
-          {FIT_REVIEW_NAME}
+          Business operations review
         </a>
       </footer>
     </div>

@@ -196,9 +196,9 @@ describe("Remy / Operations Fit Review sitewide", () => {
     const assessment = render(<LegacyAssessment />);
     expect(
       assessment.container.querySelector(
-        '[aria-label="Operations Fit Review (opens in a new tab)"]',
+        '[aria-label="Business operations review (opens in a new tab)"]',
       ),
-    ).toHaveTextContent("Operations Fit Review");
+    ).toHaveTextContent("Business operations review");
     expect(read("public/llms.txt")).toContain(FIT_REVIEW_NAME);
     expect(read("public/llms.txt")).toBe(read("public/.well-known/llms.txt"));
     expect(read("public/404.html")).toContain(FIT_REVIEW_NAME);

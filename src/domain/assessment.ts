@@ -75,28 +75,29 @@ export const ORIGINAL_ASSESSMENT_QUESTIONS = [
 
 export const TEAM_SIZE_OPTIONS = [
   "Just me",
-  "2–5 people",
-  "6–20 people",
-  "21–50 people",
-  "51+ people",
+  "2–5",
+  "6–20",
+  "21–50",
+  "51+",
 ] as const;
 export const INDUSTRY_OPTIONS = [
+  "Hospitality (restaurants, bars, hotels, catering)",
+  "Retail",
   "Construction / trades",
+  "Field / home services (cleaning, landscaping, detailing, restoration, moving)",
+  "Signs / print / production",
   "Professional services",
-  "Real estate / property",
-  "Retail / ecommerce",
-  "Hospitality",
-  "Healthcare / wellness",
   "Other",
 ] as const;
 export const PRIORITY_OPTIONS = [
-  "Reduce repetitive admin",
-  "Reduce duplicate data entry",
-  "Organize documents and emails",
-  "Draft routine reports faster",
-  "Find internal information faster",
-  "Make processes more consistent",
-  "Not sure yet",
+  "Catch work that waits on me",
+  "Stop things going missing (invoices, inventory, records)",
+  "Fix handoffs between roles",
+  "Scheduling / booking",
+  "Leads / first response",
+  "Invoices / receipts / payables",
+  "Make one messy process consistent",
+  "Not sure yet (we'll pick on the call)",
 ] as const;
 export const CONTACT_LABELS = {
   first_name: "First name",
@@ -105,7 +106,7 @@ export const CONTACT_LABELS = {
   company: "Business / company",
   team_size: "Team size",
   industry: "Industry",
-  operational_priority: "Your main operational priority",
+  operational_priority: "Main operational priority",
   phone: "Phone (optional)",
   website: "Website (optional)",
   role: "Your role (optional)",
@@ -187,20 +188,111 @@ export function readAssessmentAttribution(
   return { first_touch: { ...touch }, last_touch: { ...touch } };
 }
 
-export const ASSESSMENT_VERSION = "wonder-workflow-operations-v1-21";
+export const ASSESSMENT_VERSION = "wonder-workflow-operations-v1-22";
 export const LEGACY_ASSESSMENT_VERSION = "reconstructed-draft-1";
+export const ASSESSMENT_SUBMIT_LABEL = "See my operations score";
 export const MAX_ASSESSMENT_BYTES = 64_000;
+export type AssessmentQuestion = {
+  key: string;
+  label: string;
+  options: readonly string[];
+  helper?: string;
+  scoreValues?: readonly number[];
+};
 export const QUESTIONS = [
-  ...ORIGINAL_ASSESSMENT_QUESTIONS,
   {
-    key: "software_overlap",
-    label: "How much do your software subscriptions overlap or go unused?",
+    key: "admin_time",
+    label: "How many hours a week does repetitive admin eat?",
+    helper:
+      "Examples: scheduling, invoices, inventory counts, follow-up, paperwork.",
+    options: ["Under 2 hours", "2–5 hours", "6–10 hours", "More than 10 hours"],
+  },
+  {
+    key: "owner_bottleneck",
+    label: "How often does work wait on you personally before it can move?",
+    options: ["Rarely", "A few times a month", "Several times a week", "Most days"],
+  },
+  {
+    key: "things_go_missing",
+    label:
+      "How often do invoices, receipts, inventory, job details, or other records go missing or land with the wrong person?",
+    options: ["Rarely", "Sometimes", "Often", "Constantly"],
+  },
+  {
+    key: "role_handoffs",
+    label:
+      "How often do different people hold a different version of the truth (kitchen vs bar vs office, office vs crew, manager vs accountant)?",
+    options: ["Rarely", "Sometimes", "Often", "Constantly"],
+  },
+  {
+    key: "duplicate_entry",
+    label: "How often do you re-type the same information in more than one place?",
     options: [
-      "No overlap or unnecessary subscriptions",
-      "Some possible overlap",
-      "Several tools with overlapping features",
-      "Significant overlap or unused subscriptions",
+      "Rarely or never",
+      "A few times a month",
+      "Several times a week",
+      "Every day",
     ],
+  },
+  {
+    key: "process_repeatability",
+    label: "For the work you most want to fix, how repeatable are the steps?",
+    options: [
+      "Mostly unique each time",
+      "Some recurring steps",
+      "Mostly consistent steps",
+      "Clear steps repeated often",
+    ],
+  },
+  {
+    key: "friction_home",
+    label: "Where does friction show up most right now?",
+    options: [
+      "Leads / first response",
+      "Scheduling / booking",
+      "Doing the work",
+      "Inventory / materials / supplies",
+      "Invoices / receipts / paying vendors",
+      "Handoffs between people",
+      "Reporting / admin",
+      "Not sure yet",
+    ],
+    // Categorical Q7: identified home scores 3, "Not sure yet" scores 0.
+    scoreValues: [3, 3, 3, 3, 3, 3, 3, 0],
+  },
+] as const satisfies readonly AssessmentQuestion[];
+/** Live GHL TEXT fields (Casey 2026-09-16). Positional q1–q7 only. Do not add custom fields. Semantic ids belong in ww_assessment_answers_json. Filter reporting by ww_assessment_version so v1-21 q2/q3/q4/q7 values are not mixed with v1-22. */
+export const GHL_ASSESSMENT_Q_FIELDS = [
+  { field: "ww_assessment_q1", key: "admin_time", previousKey: "admin_time" },
+  {
+    field: "ww_assessment_q2",
+    key: "owner_bottleneck",
+    previousKey: "routine_drafting",
+  },
+  {
+    field: "ww_assessment_q3",
+    key: "things_go_missing",
+    previousKey: "document_processing",
+  },
+  {
+    field: "ww_assessment_q4",
+    key: "role_handoffs",
+    previousKey: "information_access",
+  },
+  {
+    field: "ww_assessment_q5",
+    key: "duplicate_entry",
+    previousKey: "duplicate_entry",
+  },
+  {
+    field: "ww_assessment_q6",
+    key: "process_repeatability",
+    previousKey: "process_repeatability",
+  },
+  {
+    field: "ww_assessment_q7",
+    key: "friction_home",
+    previousKey: "software_overlap",
   },
 ] as const;
 export type AssessmentVersion =
@@ -210,16 +302,33 @@ export function assessmentQuestions(version: AssessmentVersion) {
     ? ORIGINAL_ASSESSMENT_QUESTIONS
     : QUESTIONS;
 }
+export function answerScore(
+  question: AssessmentQuestion,
+  value: number,
+): number {
+  if (
+    !Number.isInteger(value) ||
+    value < 0 ||
+    value >= question.options.length
+  )
+    throw new Error("Answer all assessment questions.");
+  const scored = question.scoreValues ? question.scoreValues[value] : value;
+  if (!Number.isInteger(scored) || scored < 0 || scored > 3)
+    throw new Error("Answer all assessment questions.");
+  return scored;
+}
 export function assessmentScore(
   answers: Record<string, number>,
   version: AssessmentVersion = ASSESSMENT_VERSION,
 ) {
   const questions = assessmentQuestions(version);
-  const values = questions.map((question) => answers[question.key]);
-  if (
-    values.some((value) => !Number.isInteger(value) || value < 0 || value > 3)
-  )
-    throw new Error(`Answer all ${questions.length} assessment questions.`);
+  const values = questions.map((question) => {
+    try {
+      return answerScore(question, answers[question.key]);
+    } catch {
+      throw new Error(`Answer all ${questions.length} assessment questions.`);
+    }
+  });
   const score = values.reduce((total, value) => total + value, 0);
   const max_score = questions.length * 3;
   const tier =
@@ -229,6 +338,65 @@ export function assessmentScore(
         ? "Strong Opportunity"
         : "High-Impact Opportunity";
   return { score, max_score, tier };
+}
+
+/** Customer-facing result copy. Uses the same total as `assessmentScore`. Stored CRM `tier` stays the historical three-way label. */
+export const ASSESSMENT_RESULT_DISCLAIMER =
+  "This score is indicative, not a diagnosis or a savings guarantee. It reflects your answers about how work moves today (invoices, inventory, handoffs, and owner load). It is not a recommendation to buy services.";
+
+const ASSESSMENT_RESULT_BANDS = [
+  {
+    min: 0,
+    max: 5,
+    title: "Dialed",
+    paragraphs: [
+      "Your answers point to operations that are mostly clear.",
+      "If one sticky path still bothers you, you can book a complimentary 30-minute business operations review.",
+    ],
+  },
+  {
+    min: 6,
+    max: 11,
+    title: "One process",
+    paragraphs: [
+      "At least one path of work needs tightening: intake, quotes, handoffs, invoices, or another repeating job that still waits on you.",
+      "A complimentary 30-minute business operations review is a good place to name that path and the smallest fix worth trying first.",
+    ],
+  },
+  {
+    min: 12,
+    max: 16,
+    title: "Strong opportunity",
+    paragraphs: [
+      "Your answers point to several leaks across how work moves: status in more than one place, handoffs that drop details, or admin that rebuilds the day from scraps.",
+      "A complimentary 30-minute business operations review can rank which leaks cost the most time and choose what to fix first.",
+    ],
+  },
+  {
+    min: 17,
+    max: 21,
+    title: "Full review",
+    paragraphs: [
+      "Your answers point to friction across much of the business, not only one step. Owner load, handoffs, and admin are likely tangled together.",
+      "A complimentary 30-minute business operations review is the right next step: bring what is actually breaking, and we map where a deeper look should start.",
+    ],
+  },
+] as const;
+
+export type AssessmentResultBand = {
+  title: (typeof ASSESSMENT_RESULT_BANDS)[number]["title"];
+  paragraphs: readonly string[];
+};
+
+export function assessmentResultBand(score: number): AssessmentResultBand {
+  if (!Number.isInteger(score))
+    throw new Error("Assessment score must be a whole number from 0 to 21.");
+  const band = ASSESSMENT_RESULT_BANDS.find(
+    (item) => score >= item.min && score <= item.max,
+  );
+  if (!band)
+    throw new Error("Assessment score must be a whole number from 0 to 21.");
+  return { title: band.title, paragraphs: band.paragraphs };
 }
 
 export const assessmentSubmissionSchema = z
@@ -248,7 +416,7 @@ export const assessmentSubmissionSchema = z
         z.strictObject({
           key: z.string().min(1).max(100),
           question: z.string().max(500),
-          value: z.number().int().min(0).max(3),
+          value: z.number().int().min(0).max(7),
           label: z.string().max(500),
         }),
       )
@@ -405,6 +573,14 @@ export function buildAssessmentPrepQuestions(
       "How many hours does this process take in a typical week, and how is that measured?",
     duplicate_entry:
       "Which information is copied between which tools, and where do mistakes occur?",
+    owner_bottleneck:
+      "What work waits on you personally, and what would let it move without you?",
+    things_go_missing:
+      "Where do invoices, receipts, inventory, or job details go missing, and who should receive them?",
+    role_handoffs:
+      "Where do kitchen vs bar vs office, or office vs crew, hold a different version of the truth?",
+    friction_home:
+      "Walk through the last time this friction showed up, from the trigger to who got stuck?",
     document_processing:
       "Can you show a representative document, its required output, and the checks a reviewer performs?",
     routine_drafting:
@@ -419,9 +595,14 @@ export function buildAssessmentPrepQuestions(
     "How many hours does this process take in a typical week, and how is that measured?",
     "Who will review consequential outputs, and what happens when an output is incorrect?",
   ];
+  const catalog = assessmentQuestions(submission.assessment_version);
+  const scored = (answer: (typeof submission.answers)[number]) => {
+    const question = catalog.find((item) => item.key === answer.key);
+    return question ? answerScore(question, answer.value) : answer.value;
+  };
   for (const answer of [...submission.answers]
-    .filter((answer) => answer.value >= 2 && prompts[answer.key])
-    .sort((a, b) => b.value - a.value)
+    .filter((answer) => scored(answer) >= 2 && prompts[answer.key])
+    .sort((a, b) => scored(b) - scored(a))
     .slice(0, 3))
     questions.push(prompts[answer.key]);
   if (!submission.contact.current_tools)
