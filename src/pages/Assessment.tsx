@@ -12,7 +12,9 @@ import {
   ASSESSMENT_PHONE_HINT,
   ASSESSMENT_SUBMIT_LABEL,
   validAssessmentPhone,
+  assessmentResultBand,
   assessmentScore,
+  ASSESSMENT_RESULT_DISCLAIMER,
   QUESTIONS,
   CONTACT_LABELS,
   TEAM_SIZE_OPTIONS,
@@ -29,6 +31,21 @@ import "./assessment.css";
 function questionHelper(step: number) {
   const question: AssessmentQuestion = QUESTIONS[step];
   return question.helper ? ` ${question.helper}` : "";
+}
+
+function ResultBand({ score }: { score: number }) {
+  const band = assessmentResultBand(score);
+  return (
+    <>
+      <p>
+        <strong>{band.title}</strong>
+      </p>
+      {band.paragraphs.map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+      <p className="assessment-small">{ASSESSMENT_RESULT_DISCLAIMER}</p>
+    </>
+  );
 }
 
 const blankContact = () =>
@@ -160,15 +177,7 @@ export function Assessment() {
             <h1 className="assessment-score" ref={heading} tabIndex={-1}>
               {score.score} / {score.max_score}
             </h1>
-            <p>
-              <strong>{score.tier}</strong>
-            </p>
-            <p>
-              This score is indicative, not a diagnosis or a savings guarantee.
-              It reflects your answers about missing invoices, inventory,
-              handoffs, and owner bottleneck. It is not a recommendation to buy
-              services.
-            </p>
+            <ResultBand score={score.score} />
             <p>
               Your answers stay in this browser tab. Share your result when you
               contact us.
@@ -755,18 +764,10 @@ export function LegacyAssessment() {
             <h1 className="assessment-score" ref={stepHeading} tabIndex={-1}>
               {result.submission.score} / {result.submission.max_score}
             </h1>
-            <p>
-              <strong>{result.submission.tier}</strong>
-            </p>
+            <ResultBand score={result.submission.score} />
             <p>
               Your assessment is saved. Choose a time below to discuss your
               results. {ONE_PATH_COPY}
-            </p>
-            <p className="assessment-small">
-              This score is indicative, not a diagnosis or a savings guarantee.
-              It reflects your answers about missing invoices, inventory,
-              handoffs, and owner bottleneck. We’ll explore what it means for
-              your business during your review.
             </p>
             <section
               className="assessment-booking"

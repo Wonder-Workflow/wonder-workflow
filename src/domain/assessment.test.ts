@@ -22,6 +22,8 @@ import {
   TEAM_SIZE_OPTIONS,
   PRIORITY_OPTIONS,
   assessmentScore,
+  assessmentResultBand,
+  ASSESSMENT_RESULT_DISCLAIMER,
   answerScore,
   assessmentQuestions,
   buildAssessmentSubmission,
@@ -366,6 +368,83 @@ describe("canonical assessment scoring and validation", () => {
   });
 });
 
+describe("assessment result bands", () => {
+  const forbidden =
+    /don['’]t need|do not need|no pitch required|pick one revamp|targeted opportunity|high-impact/i;
+
+  it.each([
+    [0, "Dialed"],
+    [3, "Dialed"],
+    [5, "Dialed"],
+    [6, "One process"],
+    [8, "One process"],
+    [11, "One process"],
+    [12, "Strong opportunity"],
+    [14, "Strong opportunity"],
+    [16, "Strong opportunity"],
+    [17, "Full review"],
+    [19, "Full review"],
+    [21, "Full review"],
+  ] as const)("maps score %s to %s", (score, title) => {
+    const band = assessmentResultBand(score);
+    expect(band.title).toBe(title);
+    expect(band.paragraphs.join(" ")).not.toMatch(forbidden);
+  });
+
+  it("uses distinct titles and bodies, with Dialed, One process, and Strong opportunity paste copy", () => {
+    const dialed = assessmentResultBand(3);
+    const oneProcess = assessmentResultBand(8);
+    const strong = assessmentResultBand(14);
+    const full = assessmentResultBand(19);
+    expect(
+      new Set([dialed.title, oneProcess.title, strong.title, full.title]).size,
+    ).toBe(4);
+    expect(
+      new Set(
+        [dialed, oneProcess, strong, full].map((band) =>
+          band.paragraphs.join("\n"),
+        ),
+      ).size,
+    ).toBe(4);
+    expect(dialed.paragraphs).toEqual([
+      "Your answers point to operations that are mostly clear.",
+      "If one sticky path still bothers you, you can book a complimentary 30-minute Fit Review (business operations review).",
+    ]);
+    expect(oneProcess.paragraphs).toEqual([
+      "At least one path of work needs tightening: intake, quotes, handoffs, invoices, or another repeating job that still waits on you.",
+      "A complimentary 30-minute Fit Review is a good place to name that path and the smallest fix worth trying first.",
+    ]);
+    expect(strong.paragraphs).toEqual([
+      "Your answers point to several leaks across how work moves: status in more than one place, handoffs that drop details, or admin that rebuilds the day from scraps.",
+      "A complimentary 30-minute Fit Review can rank which leaks cost the most time and choose what to fix first.",
+    ]);
+    expect(full.paragraphs).toEqual([
+      "Your answers point to friction across much of the business, not only one step. Owner load, handoffs, and admin are likely tangled together. A complimentary 30-minute Fit Review is the right next step: bring what is actually breaking, and we map where a deeper look should start.",
+    ]);
+    expect(ASSESSMENT_RESULT_DISCLAIMER).toBe(
+      "This score is indicative, not a diagnosis or a savings guarantee. It reflects your answers about how work moves today (invoices, inventory, handoffs, and owner load). It is not a recommendation to buy services.",
+    );
+  });
+
+  it.each([-1, 22, 1.5, Number.NaN])(
+    "rejects out-of-range score %s",
+    (score) => {
+      expect(() => assessmentResultBand(score)).toThrow(/0 to 21/);
+    },
+  );
+
+  it("keeps band edges at 0, 5, 6, 11, 12, 16, 17, and 21", () => {
+    expect(assessmentResultBand(0).title).toBe("Dialed");
+    expect(assessmentResultBand(5).title).toBe("Dialed");
+    expect(assessmentResultBand(6).title).toBe("One process");
+    expect(assessmentResultBand(11).title).toBe("One process");
+    expect(assessmentResultBand(12).title).toBe("Strong opportunity");
+    expect(assessmentResultBand(16).title).toBe("Strong opportunity");
+    expect(assessmentResultBand(17).title).toBe("Full review");
+    expect(assessmentResultBand(21).title).toBe("Full review");
+  });
+});
+
 describe("assessment-to-audit adapter", () => {
   it("retains every answer, range, context field, original score and attribution", () => {
     const original = submission();
@@ -700,6 +779,12 @@ describe("retained legacy assessment save boundary (not publicly routed)", () =>
       screen.getByRole("button", { name: "Retry Original Request" }),
     );
     await screen.findByRole("heading", { name: "21 / 21" });
+    const fullReview = assessmentResultBand(21);
+    expect(screen.getByText(fullReview.title)).toBeVisible();
+    for (const paragraph of fullReview.paragraphs)
+      expect(screen.getByText(paragraph)).toBeVisible();
+    expect(screen.getByText(ASSESSMENT_RESULT_DISCLAIMER)).toBeVisible();
+    expect(screen.queryByText("High-Impact Opportunity")).not.toBeInTheDocument();
     expect(screen.queryByRole("form")).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Back" }),

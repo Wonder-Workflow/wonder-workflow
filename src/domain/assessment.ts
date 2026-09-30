@@ -340,6 +340,64 @@ export function assessmentScore(
   return { score, max_score, tier };
 }
 
+/** Customer-facing result copy. Uses the same total as `assessmentScore`. Stored CRM `tier` stays the historical three-way label. */
+export const ASSESSMENT_RESULT_DISCLAIMER =
+  "This score is indicative, not a diagnosis or a savings guarantee. It reflects your answers about how work moves today (invoices, inventory, handoffs, and owner load). It is not a recommendation to buy services.";
+
+const ASSESSMENT_RESULT_BANDS = [
+  {
+    min: 0,
+    max: 5,
+    title: "Dialed",
+    paragraphs: [
+      "Your answers point to operations that are mostly clear.",
+      "If one sticky path still bothers you, you can book a complimentary 30-minute Fit Review (business operations review).",
+    ],
+  },
+  {
+    min: 6,
+    max: 11,
+    title: "One process",
+    paragraphs: [
+      "At least one path of work needs tightening: intake, quotes, handoffs, invoices, or another repeating job that still waits on you.",
+      "A complimentary 30-minute Fit Review is a good place to name that path and the smallest fix worth trying first.",
+    ],
+  },
+  {
+    min: 12,
+    max: 16,
+    title: "Strong opportunity",
+    paragraphs: [
+      "Your answers point to several leaks across how work moves: status in more than one place, handoffs that drop details, or admin that rebuilds the day from scraps.",
+      "A complimentary 30-minute Fit Review can rank which leaks cost the most time and choose what to fix first.",
+    ],
+  },
+  {
+    min: 17,
+    max: 21,
+    title: "Full review",
+    paragraphs: [
+      "Your answers point to friction across much of the business, not only one step. Owner load, handoffs, and admin are likely tangled together. A complimentary 30-minute Fit Review is the right next step: bring what is actually breaking, and we map where a deeper look should start.",
+    ],
+  },
+] as const;
+
+export type AssessmentResultBand = {
+  title: (typeof ASSESSMENT_RESULT_BANDS)[number]["title"];
+  paragraphs: readonly string[];
+};
+
+export function assessmentResultBand(score: number): AssessmentResultBand {
+  if (!Number.isInteger(score))
+    throw new Error("Assessment score must be a whole number from 0 to 21.");
+  const band = ASSESSMENT_RESULT_BANDS.find(
+    (item) => score >= item.min && score <= item.max,
+  );
+  if (!band)
+    throw new Error("Assessment score must be a whole number from 0 to 21.");
+  return { title: band.title, paragraphs: band.paragraphs };
+}
+
 export const assessmentSubmissionSchema = z
   .strictObject({
     assessment_version: z.enum([ASSESSMENT_VERSION, LEGACY_ASSESSMENT_VERSION]),
