@@ -35,7 +35,7 @@ function renderHome() {
 
 function homepageAssessLinks() {
   return Array.from(document.querySelectorAll('a[href="/assessment"]')).filter(
-    (link) => /assess|fit review/i.test(link.textContent ?? ""),
+    (link) => /assess|business operations review/i.test(link.textContent ?? ""),
   );
 }
 
@@ -192,7 +192,8 @@ describe("Homepage ship page chrome", () => {
       true,
     );
     expect(labels.some((label) => label.includes(ASSESS_BEAT_LABEL))).toBe(true);
-    expect(labels).toContain("Book a Fit Review");
+    expect(labels).toContain("Book a business operations review");
+    expect(labels.join(" ")).not.toMatch(/Fit Review/i);
     expect(assess).toHaveLength(3);
 
     const chats = screen.getAllByRole("link", { name: "Chat with us" });

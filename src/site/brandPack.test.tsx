@@ -147,7 +147,9 @@ describe("Homepage verbal rewrite", () => {
     );
     const assess = Array.from(
       document.querySelectorAll('a[href="/assessment"]'),
-    ).filter((link) => /assess|fit review/i.test(link.textContent ?? ""));
+    ).filter((link) =>
+      /assess|business operations review/i.test(link.textContent ?? ""),
+    );
     expect(assess).toHaveLength(3);
   });
 
@@ -175,20 +177,22 @@ describe("Homepage verbal rewrite", () => {
   });
 });
 
-describe("Remy / Operations Fit Review sitewide", () => {
-  it("names Operations Fit Review on start, book, contact, services, assessment chrome, and machine files", () => {
+describe("Business operations review sitewide", () => {
+  it("names the business operations review on start, book, contact, services, assessment chrome, and machine files", () => {
     for (const path of ["/start", "/book"]) {
       const { unmount } = renderPath(path);
       expect(
-        screen.getByRole("heading", { name: "Book an Operations Fit Review" }),
+        screen.getByRole("heading", { name: FIT_REVIEW_NAME }),
       ).toBeVisible();
+      expect(document.body.textContent).not.toMatch(/Fit Review/i);
       expect(document.body.textContent).not.toMatch(/Workflow Fit Review/);
       unmount();
     }
     renderPath("/contact");
     expect(
-      screen.getByRole("link", { name: /Request an Operations Fit Review/i }),
+      screen.getByRole("link", { name: /Request a business operations review/i }),
     ).toHaveAttribute("href", "/assessment");
+    expect(document.body.textContent).not.toMatch(/Fit Review/i);
     renderPath("/services");
     expect(
       screen.getByRole("heading", { name: FIT_REVIEW_NAME }),
@@ -196,12 +200,14 @@ describe("Remy / Operations Fit Review sitewide", () => {
     const assessment = render(<LegacyAssessment />);
     expect(
       assessment.container.querySelector(
-        '[aria-label="Operations Fit Review (opens in a new tab)"]',
+        '[aria-label="Business operations review (opens in a new tab)"]',
       ),
-    ).toHaveTextContent("Operations Fit Review");
-    expect(read("public/llms.txt")).toContain(FIT_REVIEW_NAME);
+    ).toHaveTextContent("Business operations review");
+    expect(read("public/llms.txt")).toContain("business operations review");
+    expect(read("public/llms.txt")).not.toMatch(/Fit Review/i);
     expect(read("public/llms.txt")).toBe(read("public/.well-known/llms.txt"));
-    expect(read("public/404.html")).toContain(FIT_REVIEW_NAME);
+    expect(read("public/404.html")).toContain("business operations review");
+    expect(read("public/404.html")).not.toMatch(/Fit Review/i);
     expect(read("public/404.html")).toContain(BRAND_ACCENT);
   });
 
@@ -232,11 +238,12 @@ describe("Remy / Operations Fit Review sitewide", () => {
     for (const path of PUBLIC_COPY_FILES) {
       const source = read(path);
       expect(source, path).not.toMatch(/\$\d/);
-      expect(source, path).not.toContain("Workflow Fit Review");
+      expect(source, path).not.toMatch(/fit review|fit-review|fitreview/i);
       expect(source, path).not.toContain("\u2014");
     }
     expect(pages["/"][0] + pages["/"][1]).not.toContain("\u2014");
-    expect(pages["/start"][1]).toMatch(/Operations Fit Review/);
+    expect(pages["/start"][1]).toMatch(/complimentary 30-minute business operations review/);
+    expect(pages["/start"][1]).not.toMatch(/Fit Review/i);
   });
 
   it("preserves honesty FAQs on services", () => {

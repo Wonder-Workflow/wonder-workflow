@@ -108,6 +108,9 @@ test("request a diagnostic opens the short intake and leaves Fit Review CTAs on 
   await expect(
     page.getByRole("link", { name: "Book a Fit Review" }),
   ).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: "Book a business operations review" }),
+  ).toHaveCount(0);
   await page.goto("/");
   await expect(page.locator(".ww-header-assess")).toBeVisible();
   await page.goto("/assessment");
@@ -122,7 +125,7 @@ test("start, book, and contact send Fit Review traffic to the assessment", async
   for (const path of ["/start", "/book"]) {
     await page.goto(path);
     await expect(
-      page.getByRole("heading", { name: "Book an Operations Fit Review" }),
+      page.getByRole("heading", { name: "Business operations review" }),
     ).toBeVisible();
     await expect(
       page.locator(".ww-start-simple").getByRole("link", {
@@ -140,7 +143,7 @@ test("start, book, and contact send Fit Review traffic to the assessment", async
     page.getByRole("heading", { name: "Assess your operations" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Request an Operations Fit Review" }),
+    page.getByRole("link", { name: "Request a business operations review" }),
   ).toHaveAttribute("href", /\/assessment$/);
   await page.getByRole("navigation", { name: "Main navigation" })
     .getByRole("link", { name: "Assess your operations" })

@@ -24,7 +24,7 @@ const BEATS = [
 ] as const;
 
 const BRIDGE =
-  "The Fit Review is a complimentary 30-minute business operations review. You bring what is actually breaking. We build the fix around how your work really runs.";
+  "A complimentary 30-minute business operations review. You bring what is actually breaking. We build the fix around how your work really runs.";
 
 
 type Pose = { x: number; y: number; r: number; o: number; s: number };

@@ -56,11 +56,11 @@ describe("P0 public funnel and machine files", () => {
     for (const path of ["/start", "/book"]) {
       const { unmount } = renderPath(path);
       expect(
-        screen.getByRole("heading", { name: "Book an Operations Fit Review" }),
+        screen.getByRole("heading", { name: "Business operations review" }),
       ).toBeVisible();
       expect(screen.getByText(/contact details and save/i)).toBeVisible();
       expect(
-        screen.getByText(/Operations Fit Review calendar appears on the same page/i),
+        screen.getByText(/business operations review calendar appears on the same page/i),
       ).toBeVisible();
       const assess = screen.getAllByRole("link", {
         name: /Assess your operations/i,
@@ -91,7 +91,7 @@ describe("P0 public funnel and machine files", () => {
       screen.getAllByRole("link", { name: /Assess your operations/i })[0],
     ).toHaveAttribute("href", "/assessment");
     expect(
-      screen.getByRole("link", { name: /Request an Operations Fit Review/i }),
+      screen.getByRole("link", { name: /Request a business operations review/i }),
     ).toHaveAttribute("href", "/assessment");
     expect(
       screen
@@ -107,7 +107,7 @@ describe("P0 public funnel and machine files", () => {
   it("client /pricing does not keep a homepage canonical", () => {
     renderPath("/pricing");
     expect(document.title).toBe(
-      "Operations Fit Review, diagnostic, and implementation | Wonder & Workflow",
+      "Business operations review, diagnostic, and implementation | Wonder & Workflow",
     );
     expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
       "href",
