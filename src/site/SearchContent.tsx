@@ -1,7 +1,7 @@
 import { Link as RouterLink } from "react-router-dom";
 import { publicHref } from "./campaign";
 import {
-  FIT_REVIEW_NAME,
+  FIT_REVIEW_PROSE,
   LADDER_NOTE,
   ONE_PATH_COPY,
 } from "./publicOffer";
@@ -50,7 +50,7 @@ export const services: Service[] = [
   {
     slug: "operations-consultant-for-small-business",
     title: "Operations consultant for small business",
-    short: "For owners of 1–50 person field and service shops. We map one real path of work and make the next step obvious. Start with a complimentary Operations Fit Review.",
+    short: "For owners of 1–50 person field and service shops. We map one real path of work and make the next step obvious. Start with a complimentary business operations review.",
     problem: "You still hold the day together. Missed calls while you are on a job. Quotes sitting. Notes that never reach the crew. An operations consultant for a small business should fix how work moves, not sell a software stack.",
     extraSections: [
       {
@@ -94,28 +94,28 @@ export const services: Service[] = [
       "Handoff notes the team can use",
       "Fallback if the change does not stick",
     ],
-    pricing: `The ${FIT_REVIEW_NAME} is complimentary. Paid diagnostic or implementation work is quoted in writing after that review. Software and vendor costs stay separate. We do not publish package prices.`,
+    pricing: `The ${FIT_REVIEW_PROSE} is complimentary. Paid diagnostic or implementation work is quoted in writing after that review. Software and vendor costs stay separate. We do not publish package prices.`,
     faqs: [
       ["Do you work with service businesses, or only offices?", "Field and service shops with roughly 1–50 people are the core fit: cleaning, landscaping, detailing, signs and print, restoration, moving, and similar work. Law, CPA, and clinical practices are out of scope."],
       ["Are you a fractional COO?", "No. We do not lead with a fractional COO retainer or embed as your operations chief. We map one real path of work and make the next step obvious."],
       ["Is this an AI agency?", "No. Most of the time this is a structure and ownership problem, not a software problem. You may not need another tool. AI is optional later, not the pitch."],
-      ["How do we start?", `Take the two-minute assessment, leave your details, and book a complimentary ${FIT_REVIEW_NAME}. That 30-minute business operations review is the first conversation.`],
+      ["How do we start?", `Take the two-minute assessment, leave your details, and book a complimentary ${FIT_REVIEW_PROSE}. That 30-minute business operations review is the first conversation.`],
     ],
   },
   {
     slug: "operations-audit-for-small-business",
     title: "Operations audit for small business",
-    short: "A complimentary 30-minute Operations Fit Review that names where jobs get stuck. Not a multi-week paid audit as the first step.",
+    short: "A complimentary 30-minute business operations review that names where jobs get stuck. Not a multi-week paid audit as the first step.",
     problem: "Owners search for an operations audit when the day feels stuck and they want someone to look. Many audits are multi-week paid projects. Wonder & Workflow starts with a complimentary 30-minute business operations review.",
     extraSections: [
       {
         eyebrow: "Start here",
-        title: "Complimentary Operations Fit Review vs a typical multi-week paid audit",
-        body: `The ${FIT_REVIEW_NAME} is a complimentary 30-minute business operations review. You take a two-minute assessment, leave your details, and we look at the results together. A typical operations audit for a small business runs across multiple weeks, with a longer written diagnostic as the product. That deeper paid diagnostic exists here too, but it is scoped after the ${FIT_REVIEW_NAME}. We do not start with a multi-week engagement.`,
+        title: "Complimentary business operations review vs a typical multi-week paid audit",
+        body: `The ${FIT_REVIEW_PROSE} is a complimentary 30-minute business operations review. You take a two-minute assessment, leave your details, and we look at the results together. A typical operations audit for a small business runs across multiple weeks, with a longer written diagnostic as the product. That deeper paid diagnostic exists here too, but it is scoped after the ${FIT_REVIEW_PROSE}. We do not start with a multi-week engagement.`,
         points: [
-          "Complimentary Operations Fit Review: about 30 minutes, after a two-minute assessment.",
+          "Complimentary business operations review: about 30 minutes, after a two-minute assessment.",
           "Typical paid audit: multi-week discovery, more people, a longer written report.",
-          `Our paid diagnostic: quoted in writing only after the ${FIT_REVIEW_NAME}, if it is worth doing.`,
+          `Our paid diagnostic: quoted in writing only after the ${FIT_REVIEW_PROSE}, if it is worth doing.`,
         ],
       },
       {
@@ -131,7 +131,7 @@ export const services: Service[] = [
     ],
     process: [
       "Complete the two-minute operations assessment.",
-      `Book a complimentary ${FIT_REVIEW_NAME}.`,
+      `Book a complimentary ${FIT_REVIEW_PROSE}.`,
       "Walk one real path of work together.",
       "Decide whether a paid diagnostic is worth scoping, or stop.",
     ],
@@ -143,11 +143,11 @@ export const services: Service[] = [
       "Software and vendor costs kept separate",
       "Handoff so the owner knows what happens next",
     ],
-    pricing: `The ${FIT_REVIEW_NAME} is complimentary. A multi-week paid audit is not the first product. Any paid diagnostic is quoted after that review because the number of systems, people, and exceptions determines the work. You receive a written scope and price before paid work begins.`,
+    pricing: `The ${FIT_REVIEW_PROSE} is complimentary. A multi-week paid audit is not the first product. Any paid diagnostic is quoted after that review because the number of systems, people, and exceptions determines the work. You receive a written scope and price before paid work begins.`,
     faqs: [
-      ["Is the Operations Fit Review a full operations audit?", `No. It is a complimentary 30-minute business operations review. A typical multi-week paid audit is a different product. If you need that depth, we quote it after the ${FIT_REVIEW_NAME}.`],
+      ["Is the business operations review a full operations audit?", `No. It is a complimentary 30-minute business operations review. A typical multi-week paid audit is a different product. If you need that depth, we quote it after the ${FIT_REVIEW_PROSE}.`],
       ["Do you publish audit package prices?", "No. Price follows scope. Software and vendor costs stay separate."],
-      ["Will you change our systems during the review?", `No. The ${FIT_REVIEW_NAME} is a conversation and a look at how work moves. Implementation receives a separate scope, approval, and rollback plan.`],
+      ["Will you change our systems during the review?", `No. The ${FIT_REVIEW_PROSE} is a conversation and a look at how work moves. Implementation receives a separate scope, approval, and rollback plan.`],
     ],
   },
   {
@@ -158,7 +158,7 @@ export const services: Service[] = [
     ideal: ["You can name a recurring workflow but not its root cause.", "Several tools or handoffs are involved.", "You need a defensible build, improve, or stop decision."],
     process: ["Walk through a recent real example with the people doing the work.", "Map triggers, inputs, decisions, delays, exceptions, systems, and ownership.", "Compare process changes, native features, conventional automation, and AI assistance.", "Define the recommended future state, controls, and acceptance tests."],
     deliverables: ["Current-state workflow map", "Evidence-backed baseline where data exists", "Tool, permission, and dependency map", "Options comparison and recommendation", "Future-state map and implementation scope", "Acceptance tests, risks, and open questions"],
-    pricing: `The initial ${FIT_REVIEW_NAME} is complimentary. A full audit is quoted after that review because the number of systems, participants, exceptions, and evidence sources determines the work. You receive a written scope and price before paid work begins. Software and vendor costs stay separate.`,
+    pricing: `The initial ${FIT_REVIEW_PROSE} is complimentary. A full audit is quoted after that review because the number of systems, participants, exceptions, and evidence sources determines the work. You receive a written scope and price before paid work begins. Software and vendor costs stay separate.`,
     faqs: [["Is this a security or compliance audit?", "No. We consider practical privacy, access, and risk boundaries, but formal legal, certification, penetration-testing, and regulated-industry work needs an appropriately qualified specialist."], ["Will the audit recommend AI?", "Only when it is the simplest suitable option. A clearer procedure, an existing software feature, or conventional automation may be the better answer."], ["Do you change our systems during the audit?", "No production change is implied. Implementation receives a separate scope, approval, and rollback plan."]],
   },
   {
@@ -213,7 +213,7 @@ export const services: Service[] = [
     ideal: ["An owner or key employee is the bottleneck.", "The same administrative sequence happens every week.", "You want a bounded first project with a clear handoff."],
     process: ["Choose one workflow with visible friction and a reachable owner.", "Measure enough to understand the starting point.", "Use the simplest suitable change.", "Prove it on representative examples before expanding.", "Leave editable documentation and clear responsibility."],
     deliverables: ["One-workflow current and future maps", "Practical improvement recommendation", "Scoped build when justified", "Exception and fallback design", "Team training and documentation", "Measurement sheet for the first operating period"],
-    pricing: `Start with a complimentary ${FIT_REVIEW_NAME}. Any paid diagnostic or build is separately quoted, with software and usage costs shown apart from our work. We do not price from company size or an assessment score alone.`,
+    pricing: `Start with a complimentary ${FIT_REVIEW_PROSE}. Any paid diagnostic or build is separately quoted, with software and usage costs shown apart from our work. We do not price from company size or an assessment score alone.`,
     faqs: [["Is my business too small for automation?", "Possibly, but team size is not the deciding factor. Frequency, clarity, consequence of error, and maintenance capacity matter more."], ["Should we automate several processes together?", "Usually begin with one bounded workflow. What you learn about data, ownership, and adoption will make later decisions better."], ["Will our team be able to run it?", "That is an acceptance requirement: client-owned accounts where practical, documentation, training, and a manual path are part of the design."]],
   },
 ];
@@ -230,7 +230,7 @@ export const guides: Guide[] = [
       { title: "Name the stuck steps in owner language", body: "Skip enterprise labels. Write down the last five jobs and mark where they waited.", points: ["Intake: a missed call, an incomplete request, a lead that sat in a text thread.", "Quotes waiting: the estimate is in your head or your drafts, not with the customer.", "Handoffs: the office has one version of the job, the crew has another.", "Admin: invoices, payroll, and follow-up that only you can finish."] },
       { title: "Give one path of work a next owner", body: "Pick the path that repeats every week. Write the trigger, the information needed, who acts, and what done looks like. Then run the next three live jobs without you as the default next step. If the team still has to ask you, the instruction is not done." },
       { title: "Do not wait for a full exit from day-to-day work", body: "Getting out of daily operations is a later chapter. The first win is narrower: one process clearer, one owner named, one fallback if it breaks. A mastermind, an AI agency, or a fractional COO title will not fix a quote that sits until you send it." },
-      { title: "A practical next step", body: "Take the two-minute assessment, then book a complimentary Operations Fit Review. We will look at where jobs get stuck between intake and paid and choose one improvement worth doing. You may not need another tool." },
+      { title: "A practical next step", body: "Take the two-minute assessment, then book a complimentary business operations review. We will look at where jobs get stuck between intake and paid and choose one improvement worth doing. You may not need another tool." },
     ],
     faqs: [
       ["Is the founder always the bottleneck?", "Often, in shops this size. The founder holds intake, quotes, handoffs, and admin because the next step was never given an owner."],
@@ -370,7 +370,7 @@ export function ServicePage({ service }: { service: Service }) {
       <Faqs items={service.faqs} />
     </article>
     <Related />
-    <section className="ww-search-cta"><p className="ww-eyebrow">Next step</p><h2>Bring one real path of work.</h2><p>Complete the two-minute assessment (contact details and save), then book a complimentary {FIT_REVIEW_NAME} on the calendar. {ONE_PATH_COPY}</p><p className="ww-cta-ladder">{LADDER_NOTE}</p><Link className="ww-button" to="/assessment">Start the assessment <span aria-hidden="true">↗</span></Link></section>
+    <section className="ww-search-cta"><p className="ww-eyebrow">Next step</p><h2>Bring one real path of work.</h2><p>Complete the two-minute assessment (contact details and save), then book a complimentary {FIT_REVIEW_PROSE} on the calendar. {ONE_PATH_COPY}</p><p className="ww-cta-ladder">{LADDER_NOTE}</p><Link className="ww-button" to="/assessment">Start the assessment <span aria-hidden="true">↗</span></Link></section>
   </>;
 }
 
@@ -389,7 +389,7 @@ export function GuidePage({ guide }: { guide: Guide }) {
       <p className="ww-editorial-note">Reviewed {guide.reviewed ?? "September 9, 2026"}. This guide describes a decision method, not a guaranteed result. Feasibility depends on the actual workflow, tools, data, permissions, and consequences of error.</p>
     </article>
     <Related />
-    <section className="ww-search-cta"><p className="ww-eyebrow">Apply the answer</p><h2>Find the first improvement worth making.</h2><p>The assessment takes about two minutes. Save your contact details, then book a complimentary {FIT_REVIEW_NAME}. {ONE_PATH_COPY}</p><p className="ww-cta-ladder">{LADDER_NOTE}</p><Link className="ww-button" to="/assessment">Assess your operations <span aria-hidden="true">↗</span></Link></section>
+    <section className="ww-search-cta"><p className="ww-eyebrow">Apply the answer</p><h2>Find the first improvement worth making.</h2><p>The assessment takes about two minutes. Save your contact details, then book a complimentary {FIT_REVIEW_PROSE}. {ONE_PATH_COPY}</p><p className="ww-cta-ladder">{LADDER_NOTE}</p><Link className="ww-button" to="/assessment">Assess your operations <span aria-hidden="true">↗</span></Link></section>
   </>;
 }
 
@@ -399,11 +399,11 @@ export function AssessmentCaseStudy() {
     <header><p className="ww-eyebrow">First-party implementation study</p><h1>Building our operations assessment as a bounded workflow</h1><p className="ww-search-lede">This is an internal implementation note, not a client case study. It shows the inputs, design decisions, controls, and tests behind Wonder & Workflow’s own public assessment, without claiming invented savings.</p></header>
     <section className="ww-case-facts"><div><span>Boundary</span><strong>Seven questions; 0–21 indicative score</strong></div><div><span>Data posture</span><strong>Answers calculated in the browser</strong></div><div><span>Human role</span><strong>Consultant interprets context</strong></div><div><span>Claim limit</span><strong>No automatic diagnosis or savings claim</strong></div></section>
     <section className="ww-answer-block"><p className="ww-eyebrow">Starting condition</p><h2>The business needed a useful first step that did not pretend a short questionnaire could diagnose an operation.</h2><p>The assessment had to help an owner notice workflow friction, preserve privacy, work on mobile and keyboard, and lead naturally to a human conversation. It could not collect credentials, infer ROI, or activate a customer workflow.</p></section>
-    <section className="ww-process-map"><p className="ww-eyebrow">Before and after process map</p><h2>From a vague request to a reviewable next step</h2><div className="ww-map-row"><span>Before</span><ol><li>Owner feels operational friction</li><li>Problem stays broad</li><li>Solution discussion begins too early</li></ol></div><div className="ww-map-row ww-map-after"><span>After</span><ol><li>Owner answers seven bounded questions</li><li>Browser calculates an indicative band</li><li>Result names discussion areas and limitations</li><li>Owner chooses whether to email for a fit review</li></ol></div></section>
+    <section className="ww-process-map"><p className="ww-eyebrow">Before and after process map</p><h2>From a vague request to a reviewable next step</h2><div className="ww-map-row"><span>Before</span><ol><li>Owner feels operational friction</li><li>Problem stays broad</li><li>Solution discussion begins too early</li></ol></div><div className="ww-map-row ww-map-after"><span>After</span><ol><li>Owner answers seven bounded questions</li><li>Browser calculates an indicative band</li><li>Result names discussion areas and limitations</li><li>Owner chooses whether to email for a business operations review</li></ol></div></section>
     <section className="ww-guide-section"><div><h2>Controls built into the workflow</h2><ul><li>The assessment does not request contact details or confidential records.</li><li>Answers and result remain in browser memory unless the visitor independently chooses to contact us.</li><li>Score language is indicative, not diagnostic.</li><li>The consultation, not the score, determines whether a deeper diagnostic makes sense.</li><li>Customer communications and CRM automation remain outside this workflow.</li></ul></div></section>
     <section className="ww-guide-section"><div><h2>Acceptance criteria</h2><ul><li>All seven questions are usable by keyboard and at narrow mobile widths.</li><li>Score boundaries follow the documented 0–21 calculation rules.</li><li>Refresh and back/forward behavior do not submit information.</li><li>Privacy, contact, and assessment routes are crawlable public pages; internal workspace routes are excluded.</li><li>The result states its limits and provides a clear next step.</li></ul></div></section>
     <section className="ww-pricing"><p className="ww-eyebrow">Observed result</p><h2>A functioning assessment with explicit boundaries, not a fabricated ROI story.</h2><p>The implemented flow gives visitors a two-minute self-assessment and keeps their answers local to the browser. Automated build, calculation, route, accessibility, and browser tests are maintained in the project. Test results describe software behavior only; they do not prove client savings or commercial outcomes.</p></section>
-    <section className="ww-answer-block"><p className="ww-eyebrow">What we would measure next</p><h2>Evidence should grow with real use.</h2><p>Useful next measures include completion rate, qualified fit-review requests, the workflows visitors choose to discuss, accessibility issues, and the percentage of reviews that lead to a grounded proceed, revise, or stop decision. Any future case study should state its baseline, method, period, limitations, and permission.</p></section>
+    <section className="ww-answer-block"><p className="ww-eyebrow">What we would measure next</p><h2>Evidence should grow with real use.</h2><p>Useful next measures include completion rate, qualified business operations review requests, the workflows visitors choose to discuss, accessibility issues, and the percentage of reviews that lead to a grounded proceed, revise, or stop decision. Any future case study should state its baseline, method, period, limitations, and permission.</p></section>
     <section className="ww-search-cta"><p className="ww-eyebrow">See the workflow</p><h2>Use the same assessment.</h2><p>Try the public assessment, then decide whether one workflow deserves a closer look.</p><Link className="ww-button" to="/assessment">Start the assessment <span aria-hidden="true">↗</span></Link></section>
   </article>;
 }

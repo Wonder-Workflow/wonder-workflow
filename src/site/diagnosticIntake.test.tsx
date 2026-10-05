@@ -87,6 +87,9 @@ describe("diagnostic short intake", () => {
       expect(
         screen.queryByRole("link", { name: /Book a Fit Review/i }),
       ).toBeNull();
+      expect(
+        screen.queryByRole("link", { name: /Book a business operations review/i }),
+      ).toBeNull();
       expect(document.getElementById(DIAGNOSTIC_IFRAME_ID)).toHaveAttribute(
         "src",
         DIAGNOSTIC_FORM_SRC,
@@ -105,8 +108,11 @@ describe("diagnostic short intake", () => {
       "/assessment",
     );
     expect(
-      screen.getByRole("link", { name: /Book a Fit Review/i }),
+      screen.getByRole("link", { name: /Book a business operations review/i }),
     ).toHaveAttribute("href", "/assessment");
+    expect(
+      screen.queryByRole("link", { name: /Book a Fit Review/i }),
+    ).toBeNull();
     home.unmount();
 
     renderPath("/services");

@@ -18,6 +18,7 @@ import {
   CONTACT_MAILTO,
   FIT_REVIEW_NAME,
   FIT_REVIEW_PLAIN,
+  FIT_REVIEW_PROSE,
   FOOTER_BLURB,
   FOOTER_FIT_REVIEW_LABEL,
   HEADER_ASSESS_LABEL,
@@ -51,8 +52,8 @@ function NavLink(props: ComponentProps<typeof RouterNavLink>) {
 export const pages: Record<string, [string, string]> = {
   "/": [HOME_TITLE, HOME_DESCRIPTION],
   "/services": [
-    "Operations Fit Review, diagnostic, and implementation",
-    "Start with a complimentary Operations Fit Review, then a paid diagnostic scoped after the review, implementation, and optional support. Software and vendor costs stay separate.",
+    "Business operations review, diagnostic, and implementation",
+    "Start with a complimentary business operations review, then a paid diagnostic scoped after the review, implementation, and optional support. Software and vendor costs stay separate.",
   ],
   "/how-we-work": [
     "How We Map How Work Gets Done",
@@ -74,7 +75,7 @@ export const pages: Record<string, [string, string]> = {
   ],
   "/contact": [
     "Contact Wonder & Workflow",
-    "Contact Wonder&Workflow LLC about an Operations Fit Review, a project, or an existing inquiry.",
+    "Contact Wonder & Workflow LLC about a business operations review, a project, or an existing inquiry.",
   ],
   ...searchPages,
 };
@@ -101,7 +102,7 @@ function NextStepNote() {
 }
 function Invitation({
   title = "Find where jobs get stuck between intake and paid.",
-  copy = `Take the 2-minute assessment, leave your details, and book a complimentary ${FIT_REVIEW_NAME}. We’ll look at your results together and pick one improvement worth doing.`,
+  copy = "Complete the assessment, leave your details, and book a complimentary business operations review. We'll look at your results together and pick one improvement worth doing.",
 }: {
   title?: string;
   copy?: string;
@@ -307,7 +308,7 @@ function Services() {
               Request a diagnostic <Arrow />
             </Link>
             <p className="ww-small">
-              Begin with an {FIT_REVIEW_NAME}. Diagnostic deliverables and
+              Begin with a {FIT_REVIEW_PROSE}. Diagnostic deliverables and
               acceptance criteria are confirmed in a separate written scope and
               proposal. Software and vendor costs stay separate.
             </p>
@@ -350,7 +351,7 @@ function Services() {
               Scope the first improvement <Arrow />
             </Link>
             <p className="ww-small">
-              The first step is an {FIT_REVIEW_NAME}. Build scope, commercial terms, and
+              The first step is a {FIT_REVIEW_PROSE}. Build scope, commercial terms, and
               stabilization boundaries are agreed separately after diagnostic
               work. Software and vendor costs stay separate.
             </p>
@@ -589,9 +590,9 @@ function Start() {
         </div>
         <div>
           <span className="ww-step-label">2 / Complimentary · 30 minutes</span>
-          <h2>Book an {FIT_REVIEW_NAME}</h2>
+          <h2>{FIT_REVIEW_NAME}</h2>
           <p>
-            After the assessment is saved, the {FIT_REVIEW_NAME} calendar appears on
+            After the assessment is saved, the {FIT_REVIEW_PROSE} calendar appears on
             the same page. Choose a time there. Together we review the result.
             {` ${ONE_PATH_COPY}`}
           </p>
@@ -607,7 +608,7 @@ function Start() {
             Questions only? Email{" "}
             <a href="mailto:operations@wonderworkflow.com">
               operations@wonderworkflow.com</a>. That inbox is for questions, not
-            the {FIT_REVIEW_NAME} booking path.
+            the {FIT_REVIEW_PROSE} booking path.
           </p>
         </div>
       </section>
@@ -629,7 +630,7 @@ function Privacy() {
           The public operations assessment calculates a score in your browser.
           When you submit it, we receive your answers, score, name, email,
           company, team size, industry, and operational priority. You may also
-          provide optional business details. If you book an {FIT_REVIEW_NAME},
+          provide optional business details. If you book a {FIT_REVIEW_PROSE},
           we receive the appointment details and any optional booking note. Do
           not submit passwords, access keys, regulated records, or unnecessary
           personal information through the assessment or booking form.
@@ -665,7 +666,7 @@ function Privacy() {
         <h2>Follow-up and marketing</h2>
         <p>
           Your submission is used to respond to your inquiry and prepare the
-          requested {FIT_REVIEW_NAME}. The assessment does not request
+          requested {FIT_REVIEW_PROSE}. The assessment does not request
           marketing or SMS opt-in.
         </p>
         <h2>Optional text messages</h2>
@@ -703,7 +704,7 @@ function Terms() {
         <h2>Website and assessment</h2>
         <p>Our website describes AI operations and workflow services for businesses. The operations assessment provides an indicative score based on your answers. It is not a validated diagnosis, a guarantee of results, or a calculation of financial savings.</p>
         <h2>Consultations and project work</h2>
-        <p>The {FIT_REVIEW_NAME} is a complimentary {FIT_REVIEW_PLAIN}. Booking a review does not commit you to purchase services. Paid work begins only under a separately agreed scope covering deliverables, fees, responsibilities, access, and support. That agreement governs the project. Software and vendor costs stay separate.</p>
+        <p>The {FIT_REVIEW_PROSE} is a complimentary {FIT_REVIEW_PLAIN}. Booking a review does not commit you to purchase services. Paid work begins only under a separately agreed scope covering deliverables, fees, responsibilities, access, and support. That agreement governs the project. Software and vendor costs stay separate.</p>
         <h2>Information you submit</h2>
         <p>Provide accurate information that you are authorized to share. Do not submit passwords, access credentials, confidential client records, or unnecessary sensitive information through public forms. You remain responsible for decisions about your business and for approving any proposed production changes.</p>
         <h2>Appropriate use</h2>
@@ -726,7 +727,7 @@ function Contact() {
   return (
     <>
       <PageHero label="Contact" title="Let's talk about" accent="your operations."
-        copy="Contact Wonder & Workflow about an Operations Fit Review, a project, or an existing inquiry." />
+        copy="Contact Wonder & Workflow about a business operations review, a project, or an existing inquiry." />
       <section className="ww-contact-fit">
         <Eyebrow>{FIT_REVIEW_NAME}</Eyebrow>
         <h2>Assess your operations</h2>
@@ -739,7 +740,7 @@ function Contact() {
             Assess your operations <Arrow />
           </Link>
           <Link className="ww-text-link" to="/assessment">
-            Request an {FIT_REVIEW_NAME} <Arrow />
+            Request a business operations review <Arrow />
           </Link>
         </div>
         <NextStepNote />
