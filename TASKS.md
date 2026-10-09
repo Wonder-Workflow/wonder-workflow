@@ -21,3 +21,8 @@ Remaining publication blocker: verified active replacement HighLevel location/ca
 
 Source calendar/location migrated to f1FqhGEvwZsmFiGCaGqK / XKr1JMqpBJtxUDzeXcUK. Both public booking URLs verified with all writes blocked. Removed confirmed cancelled-account diagnostic embed, preserving route and attribution into assessment. Build and 371 unit tests passed; five current mocked/native browser scenarios passed. No-show replay and old-account rejection covered. Deployment remains gated on replacement live server environment/token/timezone/webhook, field/pipeline mappings and separate review-form evidence. See ../booking-handoff-reconciliation.md for exact evidence and local screenshots. No push or publication.
 Final current public-site browser suite: 7/7 passed after final rebuild, including desktop/mobile accessibility, diagnostic fallback, SEO, navigation and reduced motion.
+
+
+## Read-only launch-gate diagnosis
+
+Existing Netlify CLI authorization verified production/preview/branch location and calendar still reference cancelled account; current production credential returns401 on replacement calendar/location GETs. Build repo/main/command/dist target confirmed. Narrow launch handoff in docs/MINIMAL-WEBSITE-LAUNCH-HANDOFF.md: active path needs correct server identity, authorized contact API credential, timezone and preserved bridge workflow; optional custom field sync, pure pipeline planner, separate review forms/no-show/customer messaging are not primary website blockers. No production settings/access changed.
