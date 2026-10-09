@@ -15,3 +15,9 @@ Checks: production baseline 367 unit tests passed; integrated source 367 unit te
 Protected production server, Netlify function/routing, intake schemas and assessment data contracts are unchanged. No live lead, email, campaign or appointment created. No screenshot-upload retry, credential change, merge, push or publication.
 
 Remaining publication blocker: verified active replacement HighLevel location/calendar/form/widget ownership, 30-minute duration/timezone/availability, contact custom-field and opportunity mappings, tags and trigger review. Historical replacement location f1FqhGEvwZsmFiGCaGqK is unverified; parent connector checks return 401. Source still retains old enforced location/calendar pair. Grokbot is assigned external verification only. After verified data arrives, update validation/booking acknowledgement/environment mappings together, run isolated checks, and report to parent before any live test/publication.
+
+
+## Replacement calendar migration checkpoint
+
+Source calendar/location migrated to f1FqhGEvwZsmFiGCaGqK / XKr1JMqpBJtxUDzeXcUK. Both public booking URLs verified with all writes blocked. Removed confirmed cancelled-account diagnostic embed, preserving route and attribution into assessment. Build and 371 unit tests passed; five current mocked/native browser scenarios passed. No-show replay and old-account rejection covered. Deployment remains gated on replacement live server environment/token/timezone/webhook, field/pipeline mappings and separate review-form evidence. See ../booking-handoff-reconciliation.md for exact evidence and local screenshots. No push or publication.
+Final current public-site browser suite: 7/7 passed after final rebuild, including desktop/mobile accessibility, diagnostic fallback, SEO, navigation and reduced motion.
