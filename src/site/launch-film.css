@@ -1,0 +1,111 @@
+.ww-launch-intro {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  overflow: hidden;
+  background: #070608;
+  opacity: 1;
+  transition: opacity 200ms ease;
+}
+.ww-launch-intro.ww-intro-exiting {
+  opacity: 0;
+}
+.ww-launch-intro video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  pointer-events: none;
+}
+.ww-launch-intro video.ww-launch-video-playing {
+  opacity: 1;
+}
+.ww-launch-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  color: #f8f5fc;
+  background: radial-gradient(
+    circle at center,
+    #20152f 0,
+    #0a080d 58%,
+    #070608 100%
+  );
+}
+.ww-launch-fallback img {
+  width: clamp(90px, 10vw, 150px);
+  height: auto;
+  filter: drop-shadow(0 18px 35px #9b5bc855);
+  animation: ww-intro-mark 1.8s both cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ww-launch-fallback span {
+  font:
+    clamp(28px, 4vw, 52px)/1 Georgia,
+    "Times New Roman",
+    serif;
+  letter-spacing: -0.04em;
+  animation: ww-intro-copy 1.5s 0.18s both cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ww-launch-fallback i {
+  color: #c9aef1;
+  font-weight: 400;
+}
+.ww-launch-fallback small {
+  color: #c9c2d0;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  animation: ww-intro-copy 1.5s 0.35s both cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes ww-intro-mark {
+  from {
+    opacity: 0;
+    transform: scale(0.78) rotate(-8deg);
+    filter: blur(8px) drop-shadow(0 18px 35px #9b5bc800);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+    filter: blur(0) drop-shadow(0 18px 35px #9b5bc855);
+  }
+}
+@keyframes ww-intro-copy {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.ww-site .ww-intro-skip {
+  position: absolute;
+  top: 24px;
+  right: 5%;
+  pointer-events: auto;
+  border: 1px solid #cdc6dc;
+  border-radius: 5px;
+  background: #fff;
+  color: #30244c;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 18px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  min-height: 48px;
+  box-shadow: 0 2px 15px #20232b10;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ww-launch-intro {
+    display: none;
+  }
+}

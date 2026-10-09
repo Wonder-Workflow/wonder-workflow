@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
 import { QUESTIONS } from "../src/domain/assessment";
 import { mkdir } from "node:fs/promises";
@@ -72,7 +72,7 @@ test("mobile navigation and campaign context reach the assessment", async ({
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://wonderworkflow.com/assessment",
+    "https://wonderworkflow.com/assessment/",
   );
   await expect(
     page.getByRole("link", { name: "Privacy (opens in a new tab)" }),
@@ -106,10 +106,10 @@ test("request a diagnostic opens the short intake and leaves Fit Review CTAs on 
   ).toHaveCount(0);
   await expect(page.locator(".ww-header-assess")).toHaveCount(0);
   await expect(
-    page.getByRole("link", { name: "Book a Fit Review" }),
+    page.getByRole("link", { name: "Book a Business Operations Review" }),
   ).toHaveCount(0);
   await page.goto("/");
-  await expect(page.locator(".ww-header-assess")).toBeVisible();
+  await expect(page.getByRole("link", { name: /Let's talk/i })).toBeVisible();
   await page.goto("/assessment");
   await expect(
     page.getByRole("heading", { name: QUESTIONS[0].label, exact: true }),
@@ -122,7 +122,7 @@ test("start, book, and contact send Fit Review traffic to the assessment", async
   for (const path of ["/start", "/book"]) {
     await page.goto(path);
     await expect(
-      page.getByRole("heading", { name: "Book an Operations Fit Review" }),
+      page.getByRole("heading", { name: "Book a Business Operations Review" }),
     ).toBeVisible();
     await expect(
       page.locator(".ww-start-simple").getByRole("link", {
@@ -140,7 +140,7 @@ test("start, book, and contact send Fit Review traffic to the assessment", async
     page.getByRole("heading", { name: "Assess your operations" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Request an Operations Fit Review" }),
+    page.getByRole("link", { name: "Request a Business Operations Review" }),
   ).toHaveAttribute("href", /\/assessment$/);
   await page.getByRole("navigation", { name: "Main navigation" })
     .getByRole("link", { name: "Assess your operations" })
@@ -148,25 +148,12 @@ test("start, book, and contact send Fit Review traffic to the assessment", async
   await expect(page).toHaveURL(/\/assessment$/);
 });
 
-test("homepage ships Feel photography with no intro film or workflow theater", async ({
-  page,
-}) => {
+test("approved homepage retains a primary review CTA after the intro", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
   await expect(page.locator(".ww-launch-intro")).toHaveCount(0);
-  await expect(page.locator("video")).toHaveCount(0);
-  await expect(page.locator(".ww-operating-scene")).toHaveCount(0);
-  await expect(page.locator(".ops-chapter")).toHaveCount(0);
-  await expect(
-    page.getByRole("heading", {
-      name: "Your business has outgrown the way the work gets done.",
-    }),
-  ).toBeVisible();
-  const hero = page.locator(".ship-feel-hero");
-  await expect(hero).toBeVisible();
-  await expect(hero).toHaveAttribute("src", /warehouse-pace-web\.jpg/);
-  await expect(page.locator(".ww-header-assess")).toBeVisible();
-  await page.locator(".ww-header-assess").click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/shouldn.t need you for everything/);
+  await page.getByRole("link", { name: /Let's talk/i }).click();
   await expect(page).toHaveURL(/assessment$/);
 });
 
@@ -194,7 +181,7 @@ test("stage 1 SEO pages render and send the CTA to the assessment", async ({
     ).toHaveAttribute("href", /\/assessment$/);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       "href",
-      `https://wonderworkflow.com${path}`,
+      `https://wonderworkflow.com${path}/`,
     );
   }
 });
@@ -206,5 +193,5 @@ test("reduced motion still shows the homepage immediately", async ({
   await page.goto("/");
   await expect(page.locator("video")).toHaveCount(0);
   await expect(page.locator(".ww-site h1")).toBeVisible();
-  await expect(page.locator(".ship-feel-hero")).toBeVisible();
+  await expect(page.locator(".ww-editorial-hero-visual")).toBeVisible();
 });

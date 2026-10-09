@@ -714,7 +714,7 @@ export function LegacyAssessment() {
                       ? "Retry Original Request"
                       : accepting === null
                         ? "Checking availability…"
-                        : "Get My AI Operations Score"}
+                        : "Get My Operations Score"}
               </button>
               <button
                 className="assessment-back"
@@ -813,7 +813,7 @@ export function LegacyAssessment() {
         </a>
         <a
           href="/start"
-          aria-label="Operations Fit Review (opens in a new tab)"
+          aria-label="Business Operations Review (opens in a new tab)"
           target="_blank"
           rel="noopener noreferrer"
         >

@@ -38,7 +38,7 @@ describe("technical SEO for the brand pack PR", () => {
   it("assessment JSON-LD is a light HowTo and is written on the public path", () => {
     const json = graphTypes("/assessment");
     expect(json).toContain('"@type":"HowTo"');
-    expect(json).toContain("Operations Fit Review");
+    expect(json).toContain("Business Operations Review");
     render(<LegacyAssessment />);
     expect(
       document.querySelector("#ww-structured-data")?.textContent,
@@ -61,7 +61,7 @@ describe("technical SEO for the brand pack PR", () => {
     const home = readFileSync(join(process.cwd(), "src/site/Website.tsx"), "utf8");
     expect(css).not.toContain("ww-workflow-hero");
     expect(home).not.toContain("ww-workflow-hero");
-    expect(home).toContain("HomepageShip");
+    expect(home).toContain("EditorialHome");
   });
 
   it("sitemap lastmod matches trailing-slash canonicals and Search Console docs exist", () => {

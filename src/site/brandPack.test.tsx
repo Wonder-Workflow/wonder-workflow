@@ -105,89 +105,57 @@ describe("Ian-approved brand pack", () => {
     expect(html).not.toContain("/brand/logo-on-black.png");
   });
 
-  it("kills homepage product theater and the old 3D emblem as master brand", () => {
+  it("keeps the production master wordmark and approved intro without workflow theater", () => {
     const source = read("src/site/Website.tsx");
-    expect(source).not.toContain("One request. A connected workflow.");
     expect(source).not.toContain("WorkflowEntrance");
-    expect(source).not.toContain("LaunchFilm");
-    expect(source).not.toContain("ww-workflow-hero");
-    expect(source).not.toContain("/brand/launch.mp4");
-    expect(source).not.toContain("/brand/emblem.png");
+    expect(source).toContain("LaunchFilm");
     renderPath("/");
-    expect(document.querySelector(".ww-launch-intro")).toBeNull();
+    expect(document.querySelector(".ww-wordmark .ww-brand-lockup")).toBeTruthy();
     expect(document.querySelector(".ww-operating-scene")).toBeNull();
     expect(document.body.textContent).not.toMatch(/Illustrative workflow/i);
-    expect(document.body.textContent).not.toMatch(/connected tools, useful AI/i);
+    expect(read("src/site/LaunchFilm.tsx")).toContain("/brand/launch.mp4");
   });
+
 });
 
 describe("Homepage verbal rewrite", () => {
-  it("locks meta, quiet H1, Feel photography, and the three Assess placements", () => {
-    expect(pages["/"][0]).toBe(HOME_TITLE);
-    expect(pages["/"][1]).toBe(HOME_DESCRIPTION);
+  it("uses approved homepage metadata, a single visible H1 and native review CTAs", () => {
+    expect(pages["/"]).toEqual([HOME_TITLE, HOME_DESCRIPTION]);
     renderPath("/");
     expect(document.title).toBe(`${HOME_TITLE} | Wonder & Workflow`);
-    expect(
-      screen.getByRole("heading", { level: 1, name: HOME_H1 }),
-    ).toBeVisible();
-    expect(
-      screen.getByRole("heading", {
-        name: "The way work gets done can't keep up with the work.",
-      }),
-    ).toBeVisible();
-    expect(document.querySelector(".ship-feel-hero")).toHaveAttribute(
-      "src",
-      "/brand/homepage-ship/warehouse-pace-web.jpg",
-    );
-    expect(document.body.textContent).not.toMatch(
-      /Missed calls while you’re on a job/,
-    );
-    expect(document.body.textContent).toMatch(
-      /fix how work gets done, without defaulting to another tool/,
-    );
-    const assess = Array.from(
-      document.querySelectorAll('a[href="/assessment"]'),
-    ).filter((link) => /assess|fit review/i.test(link.textContent ?? ""));
-    expect(assess).toHaveLength(3);
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole("heading", { level: 1, name: HOME_H1 })).toBeVisible();
+    expect(screen.getByText("Practical fixes for the everyday problems costing your team time, money and momentum.")).toBeVisible();
+    expect(screen.getAllByRole("link", { name: /Free Business Operations Review/i })).toHaveLength(2);
   });
 
-  it("covers who it is for, owner-scale forks, and quiet services chrome", () => {
+  it("uses approved audiences and homepage section navigation", () => {
     renderPath("/");
-    expect(
-      screen.getByRole("heading", {
-        name: /Built for shops where the owner still holds the day together/i,
-      }),
-    ).toBeVisible();
-    expect(document.body.textContent).toMatch(/Cleaning, landscaping, detailing/);
-    expect(document.body.textContent).toMatch(/hospitality, retail/);
-    expect(document.body.textContent).not.toMatch(/all-in-one field app/);
-    expect(document.body.textContent).not.toMatch(/fractional COO embed/);
-    expect(document.body.textContent).not.toMatch(/Not for:/);
-    expect(screen.getByRole("heading", { name: /First hires/i })).toBeVisible();
-    expect(screen.getByRole("heading", { name: /Volume spike/i })).toBeVisible();
+    expect(document.body.textContent).toMatch(/Contractors/);
+    expect(document.body.textContent).toMatch(/Hospitality/);
+    const nav = screen.getByRole("navigation", { name: "Main navigation" });
+    expect(nav).toHaveTextContent("Who we help");
+    expect(nav).toHaveTextContent("Our approach");
+    expect(nav).toHaveTextContent("About Ian");
+    expect(screen.getByRole("link", { name: "Who we help" })).toHaveAttribute("href", "/#who-we-help");
     expect(document.body.textContent).not.toMatch(/\$\d/);
-    expect(
-      screen.getByRole("navigation", { name: "Main navigation" }),
-    ).toHaveTextContent(/See how we work/);
-    expect(
-      screen.getByRole("navigation", { name: "Main navigation" }),
-    ).not.toHaveTextContent(/Get started/i);
   });
+
 });
 
-describe("Remy / Operations Fit Review sitewide", () => {
-  it("names Operations Fit Review on start, book, contact, services, assessment chrome, and machine files", () => {
+describe("Remy / Business Operations Review sitewide", () => {
+  it("names Business Operations Review on start, book, contact, services, assessment chrome, and machine files", () => {
     for (const path of ["/start", "/book"]) {
       const { unmount } = renderPath(path);
       expect(
-        screen.getByRole("heading", { name: "Book an Operations Fit Review" }),
+        screen.getByRole("heading", { name: "Book a Business Operations Review" }),
       ).toBeVisible();
       expect(document.body.textContent).not.toMatch(/Workflow Fit Review/);
       unmount();
     }
     renderPath("/contact");
     expect(
-      screen.getByRole("link", { name: /Request an Operations Fit Review/i }),
+      screen.getByRole("link", { name: /Request a Business Operations Review/i }),
     ).toHaveAttribute("href", "/assessment");
     renderPath("/services");
     expect(
@@ -196,9 +164,9 @@ describe("Remy / Operations Fit Review sitewide", () => {
     const assessment = render(<LegacyAssessment />);
     expect(
       assessment.container.querySelector(
-        '[aria-label="Operations Fit Review (opens in a new tab)"]',
+        '[aria-label="Business Operations Review (opens in a new tab)"]',
       ),
-    ).toHaveTextContent("Operations Fit Review");
+    ).toHaveTextContent("Business Operations Review");
     expect(read("public/llms.txt")).toContain(FIT_REVIEW_NAME);
     expect(read("public/llms.txt")).toBe(read("public/.well-known/llms.txt"));
     expect(read("public/404.html")).toContain(FIT_REVIEW_NAME);
@@ -236,7 +204,7 @@ describe("Remy / Operations Fit Review sitewide", () => {
       expect(source, path).not.toContain("\u2014");
     }
     expect(pages["/"][0] + pages["/"][1]).not.toContain("\u2014");
-    expect(pages["/start"][1]).toMatch(/Operations Fit Review/);
+    expect(pages["/start"][1]).toMatch(/Business Operations Review/);
   });
 
   it("preserves honesty FAQs on services", () => {

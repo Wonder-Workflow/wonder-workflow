@@ -21,6 +21,8 @@ try {
       .replace(/<meta property="og:description" content="[^"]*"\s*\/?\s*>/, `<meta property="og:description" content="${escape(page.metadata[1])}">`)
       .replace(/<meta property="og:url" content="[^"]*"\s*\/?\s*>/, `<meta property="og:url" content="${canonical}">`)
       .replace("</head>", `<link rel="canonical" href="${canonical}">${routeCss.map(name => `<link rel="stylesheet" href="/assets/${name}">`).join("")}${schema}</head>`);
+    // Preserve the campaign page's single conversion path without a chat widget.
+    if (page.path === "/workflow-review") html = html.replace(/<script\b[^>]*src="https:\/\/widgets\.leadconnectorhq\.com\/loader\.js"[^>]*><\/script>/g, "");
     const directory = path.join("dist", page.path);
     await mkdir(directory, { recursive: true });
     await writeFile(path.join(directory, "index.html"), html);

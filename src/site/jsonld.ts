@@ -46,8 +46,8 @@ export function assessmentHowToNode() {
       {
         "@type": "HowToStep",
         position: 3,
-        name: "Book an Operations Fit Review",
-        text: "Book a complimentary 30-minute Operations Fit Review on the calendar.",
+        name: "Book a Business Operations Review",
+        text: "Book a complimentary 30-minute Business Operations Review on the calendar.",
       },
     ],
   };

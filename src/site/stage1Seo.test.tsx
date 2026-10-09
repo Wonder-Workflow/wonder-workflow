@@ -118,7 +118,7 @@ describe("Stage 1 SEO pages", () => {
     expect(
       screen.getByRole("heading", {
         level: 2,
-        name: /Operations Fit Review/i,
+        name: /^Complimentary Business Operations Review vs a typical multi-week paid audit$/i,
       }),
     ).toBeVisible();
     const copy = document.body.textContent ?? "";

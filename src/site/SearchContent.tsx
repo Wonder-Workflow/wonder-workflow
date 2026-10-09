@@ -50,7 +50,7 @@ export const services: Service[] = [
   {
     slug: "operations-consultant-for-small-business",
     title: "Operations consultant for small business",
-    short: "For owners of 1–50 person field and service shops. We map one real path of work and make the next step obvious. Start with a complimentary Operations Fit Review.",
+    short: "For owners of 1–50 person field and service shops. We map one real path of work and make the next step obvious. Start with a complimentary Business Operations Review.",
     problem: "You still hold the day together. Missed calls while you are on a job. Quotes sitting. Notes that never reach the crew. An operations consultant for a small business should fix how work moves, not sell a software stack.",
     extraSections: [
       {
@@ -105,15 +105,15 @@ export const services: Service[] = [
   {
     slug: "operations-audit-for-small-business",
     title: "Operations audit for small business",
-    short: "A complimentary 30-minute Operations Fit Review that names where jobs get stuck. Not a multi-week paid audit as the first step.",
+    short: "A complimentary 30-minute Business Operations Review that names where jobs get stuck. Not a multi-week paid audit as the first step.",
     problem: "Owners search for an operations audit when the day feels stuck and they want someone to look. Many audits are multi-week paid projects. Wonder & Workflow starts with a complimentary 30-minute business operations review.",
     extraSections: [
       {
         eyebrow: "Start here",
-        title: "Complimentary Operations Fit Review vs a typical multi-week paid audit",
+        title: "Complimentary Business Operations Review vs a typical multi-week paid audit",
         body: `The ${FIT_REVIEW_NAME} is a complimentary 30-minute business operations review. You take a two-minute assessment, leave your details, and we look at the results together. A typical operations audit for a small business runs across multiple weeks, with a longer written diagnostic as the product. That deeper paid diagnostic exists here too, but it is scoped after the ${FIT_REVIEW_NAME}. We do not start with a multi-week engagement.`,
         points: [
-          "Complimentary Operations Fit Review: about 30 minutes, after a two-minute assessment.",
+          "Complimentary Business Operations Review: about 30 minutes, after a two-minute assessment.",
           "Typical paid audit: multi-week discovery, more people, a longer written report.",
           `Our paid diagnostic: quoted in writing only after the ${FIT_REVIEW_NAME}, if it is worth doing.`,
         ],
@@ -145,7 +145,7 @@ export const services: Service[] = [
     ],
     pricing: `The ${FIT_REVIEW_NAME} is complimentary. A multi-week paid audit is not the first product. Any paid diagnostic is quoted after that review because the number of systems, people, and exceptions determines the work. You receive a written scope and price before paid work begins.`,
     faqs: [
-      ["Is the Operations Fit Review a full operations audit?", `No. It is a complimentary 30-minute business operations review. A typical multi-week paid audit is a different product. If you need that depth, we quote it after the ${FIT_REVIEW_NAME}.`],
+      ["Is the Business Operations Review a full operations audit?", `No. It is a complimentary 30-minute business operations review. A typical multi-week paid audit is a different product. If you need that depth, we quote it after the ${FIT_REVIEW_NAME}.`],
       ["Do you publish audit package prices?", "No. Price follows scope. Software and vendor costs stay separate."],
       ["Will you change our systems during the review?", `No. The ${FIT_REVIEW_NAME} is a conversation and a look at how work moves. Implementation receives a separate scope, approval, and rollback plan.`],
     ],
@@ -230,7 +230,7 @@ export const guides: Guide[] = [
       { title: "Name the stuck steps in owner language", body: "Skip enterprise labels. Write down the last five jobs and mark where they waited.", points: ["Intake: a missed call, an incomplete request, a lead that sat in a text thread.", "Quotes waiting: the estimate is in your head or your drafts, not with the customer.", "Handoffs: the office has one version of the job, the crew has another.", "Admin: invoices, payroll, and follow-up that only you can finish."] },
       { title: "Give one path of work a next owner", body: "Pick the path that repeats every week. Write the trigger, the information needed, who acts, and what done looks like. Then run the next three live jobs without you as the default next step. If the team still has to ask you, the instruction is not done." },
       { title: "Do not wait for a full exit from day-to-day work", body: "Getting out of daily operations is a later chapter. The first win is narrower: one process clearer, one owner named, one fallback if it breaks. A mastermind, an AI agency, or a fractional COO title will not fix a quote that sits until you send it." },
-      { title: "A practical next step", body: "Take the two-minute assessment, then book a complimentary Operations Fit Review. We will look at where jobs get stuck between intake and paid and choose one improvement worth doing. You may not need another tool." },
+      { title: "A practical next step", body: "Take the two-minute assessment, then book a complimentary Business Operations Review. We will look at where jobs get stuck between intake and paid and choose one improvement worth doing. You may not need another tool." },
     ],
     faqs: [
       ["Is the founder always the bottleneck?", "Often, in shops this size. The founder holds intake, quotes, handoffs, and admin because the next step was never given an owner."],

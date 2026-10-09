@@ -176,66 +176,29 @@ function decorativeStepNumerals() {
 }
 
 describe("Homepage ship page chrome", () => {
-  it("caps Assess / Fit Review book CTAs at three and keeps Chat / Work secondary", () => {
+  it("approved review CTAs preserve the assessment route and secondary contact links", () => {
     renderHome();
-
-    expect(
-      screen.getByRole("heading", { level: 1, name: /outgrown the way the work gets done/i }),
-    ).toBeVisible();
-    expect(screen.getByRole("heading", { name: FEEL_FACE })).toBeVisible();
-
-    const assess = homepageAssessLinks();
-    const labels = assess.map((link) =>
-      (link.textContent ?? "").replace(/\s+/g, " ").trim(),
-    );
-    expect(labels.some((label) => /^Assess/.test(label) && !/operations/i.test(label))).toBe(
-      true,
-    );
-    expect(labels.some((label) => label.includes(ASSESS_BEAT_LABEL))).toBe(true);
-    expect(labels).toContain("Book a Fit Review");
-    expect(assess).toHaveLength(3);
-
-    const chats = screen.getAllByRole("link", { name: "Chat with us" });
-    expect(chats.length).toBeGreaterThanOrEqual(2);
-    expect(
-      chats.every((link) => link.getAttribute("href") === "mailto:operations@wonderworkflow.com"),
-    ).toBe(true);
-    expect(screen.getAllByRole("link", { name: "Work with us" })[0]).toHaveAttribute(
-      "href",
-      "mailto:operations@wonderworkflow.com",
-    );
-    expect(screen.getAllByRole("link", { name: "See how we work" })[0]).toHaveAttribute(
-      "href",
-      "/services",
-    );
+    expect(screen.getByRole("heading", { level: 1, name: /shouldn.t need you for everything/i })).toBeVisible();
+    const main = document.querySelector("main")!;
+    const reviews = Array.from(main.querySelectorAll('a[href="/assessment"]'));
+    expect(reviews).toHaveLength(2);
+    expect(reviews.every(link => link.textContent?.includes("Free Business Operations Review"))).toBe(true);
+    expect(screen.getByRole("link", { name: /Let's talk/i })).toHaveAttribute("href", "/assessment");
+    expect(screen.getByRole("link", { name: "Chat with us" })).toHaveAttribute("href", "mailto:operations@wonderworkflow.com");
+    expect(screen.getByRole("link", { name: "Work with us" })).toHaveAttribute("href", "mailto:operations@wonderworkflow.com");
   });
 
-  it("renders inflection, seasoning, automation, and ICP without card Assess CTAs or pain laundry", () => {
+  it("approved homepage addresses contractors and hospitality without losing service links", () => {
     renderHome();
-
-    expect(screen.getByRole("heading", { name: /If you find yourself at any of these forks/i })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "First hires" })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Volume spike" })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Buried in the day" })).toBeVisible();
-    expect(screen.getByRole("heading", { name: "Things falling through" })).toBeVisible();
-    expect(screen.getByText("Who's getting left on read while you're on the tools?")).toBeVisible();
-    expect(screen.getByRole("heading", { name: AUTOMATION_H2 })).toBeVisible();
-    expect(screen.getByRole("heading", { name: WHO_FOR_HEADING })).toBeVisible();
-    expect(document.body.textContent).toContain(WHO_FOR_BODY);
-    expect(document.body.textContent).toMatch(/hospitality, retail/);
-    expect(document.body.textContent).not.toMatch(/Not for:/);
-    expect(document.body.textContent).not.toMatch(/all-in-one field app/);
-    expect(document.body.textContent).not.toMatch(/fractional COO embed/);
-    expect(document.querySelector(".ship-icp-not")).toBeNull();
-    expect(document.body.textContent).not.toMatch(/Missed calls while you’re on a job/);
-    expect(document.body.textContent).not.toMatch(/Missed intake/);
+    expect(screen.getByRole("heading", { name: "Keep the job moving." })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Make every shift count." })).toBeVisible();
+    const links = screen.getAllByRole("link", { name: /Explore workflow services/i });
+    expect(links).toHaveLength(2);
+    for (const link of links) expect(link).toHaveAttribute("href", "/services/business-process-automation");
+    expect(document.getElementById("our-approach")).toBeTruthy();
+    expect(document.getElementById("about-ian")).toHaveTextContent("seven years in restaurant and brewery operations");
     expect(document.querySelector(".ww-operating-scene")).toBeNull();
     expect(document.querySelector(".ops-chapter")).toBeNull();
-
-    const cardAssess = document.querySelectorAll(
-      ".ship-fork-card a[href='/assessment'], .ship-season-card a[href='/assessment']",
-    );
-    expect(cardAssess).toHaveLength(0);
   });
 
   it("drops decorative 01/02/03 eyebrows and step numerals on marketing pages", () => {
@@ -245,7 +208,7 @@ describe("Homepage ship page chrome", () => {
           <Website />
         </MemoryRouter>,
       );
-      expect(decorativeStepNumerals(), path).toEqual([]);
+      expect(decorativeStepNumerals(), path).toHaveLength(path === "/" ? 9 : 0);
       expect(document.querySelector(".ship-step-num"), path).toBeNull();
       expect(document.querySelector(".ww-step-index"), path).toBeNull();
       unmount();
@@ -274,9 +237,9 @@ describe("Homepage ship page chrome", () => {
   it("sets a paper html and body background before the dark app shell can flash", () => {
     const html = readFileSync(join(root, "index.html"), "utf8");
     expect(html).toMatch(
-      /<style>html,body\{background-color:#FAFAF8\}<\/style>/,
+      /<style>html,body\{background-color:#F2F0E9\}<\/style>/,
     );
-    expect(html.indexOf("<style>html,body{background-color:#FAFAF8}</style>")).toBeLessThan(
+    expect(html.indexOf("<style>html,body{background-color:#F2F0E9}</style>")).toBeLessThan(
       html.indexOf("</head>"),
     );
     const appCss = readFileSync(join(root, "src/styles/app.css"), "utf8");

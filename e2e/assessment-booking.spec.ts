@@ -1,4 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect } from "./fixtures";
+import type { Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
 import { createBridge } from "../server/bridge";
@@ -49,8 +50,8 @@ test("unavailable submission service retains answers and never shows a false sav
   await page.route("**/api/integration-status",route=>route.fulfill({json:{acceptingSubmissions:false}}));
   await page.goto("/assessment/");
   await fillAssessment(page);
-  await page.getByRole("button",{name:"Get My AI Operations Score"}).click();
-  await expect(page.getByRole("alert")).toContainText("We can’t save your assessment right now");
+  await page.getByRole("button",{name:"Get My Operations Score"}).click();
+  await expect(page.getByRole("alert")).toContainText(/save your assessment right now/);
   await expect(page.getByLabel("Email",{exact:true})).toHaveValue("taylor@example.test");
   await expect(page.locator(".assessment-calendar")).toHaveCount(0);
   await expect(page.getByText(/Preview only|Preview My Score|Direct Calendar Preview/)).toHaveCount(0);
@@ -219,7 +220,7 @@ test("assessment → canonical booking → protected inbox → audit using fake 
   await page.goto("/assessment");
   await fillAssessment(page);
   await page
-    .getByRole("button", { name: "Get My AI Operations Score", exact: true })
+    .getByRole("button", { name: "Get My Operations Score", exact: true })
     .click();
   await expect(
     page.getByRole("heading", { name: "21 / 21", exact: true }),

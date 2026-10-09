@@ -8,15 +8,15 @@ export default defineConfig({
   reporter: [["list"], ["html", { open: "never" }]],
   outputDir: "test-results",
   use: {
-    baseURL: "http://127.0.0.1:4173",
+    baseURL: "http://127.0.0.1:4174",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     ...devices["Desktop Chrome"],
     channel: "chrome",
   },
   webServer: {
-    command: "npm run preview -- --port 4173 --strictPort",
-    url: "http://127.0.0.1:4173",
+    command: "npm run preview -- --port 4174 --strictPort",
+    url: "http://127.0.0.1:4174",
     reuseExistingServer: !process.env.CI,
     timeout: 30000,
   },

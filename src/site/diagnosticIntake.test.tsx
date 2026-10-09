@@ -33,13 +33,13 @@ describe("main navigation", () => {
       const { unmount } = renderPath(path);
       const nav = screen.getByRole("navigation", { name: "Main navigation" });
       const [home] = within(nav).getAllByRole("link");
-      expect(home).toHaveTextContent(/^Home$/);
-      expect(home).toHaveAttribute("href", "/");
+      expect(home).toHaveTextContent(path === "/" ? /^Who we help$/ : /^Home$/);
+      expect(home).toHaveAttribute("href", path === "/" ? "/#who-we-help" : "/");
       expect(
         screen.getByRole("link", { name: "Wonder & Workflow home" }),
       ).toHaveAttribute("href", "/");
       if (path === "/") {
-        expect(home).toHaveAttribute("aria-current", "page");
+        expect(home).not.toHaveAttribute("aria-current");
       } else {
         expect(home).not.toHaveAttribute("aria-current");
       }
@@ -85,7 +85,7 @@ describe("diagnostic short intake", () => {
         screen.queryByRole("link", { name: /Assess your operations/i }),
       ).toBeNull();
       expect(
-        screen.queryByRole("link", { name: /Book a Fit Review/i }),
+        screen.queryByRole("link", { name: /Book a Business Operations Review/i }),
       ).toBeNull();
       expect(document.getElementById(DIAGNOSTIC_IFRAME_ID)).toHaveAttribute(
         "src",
@@ -99,13 +99,13 @@ describe("diagnostic short intake", () => {
     }
 
     const home = renderPath("/");
-    expect(document.querySelector(".ww-header-assess")).toBeTruthy();
-    expect(screen.getByRole("link", { name: /^Assess$/ })).toHaveAttribute(
+    expect(document.querySelector(".ww-header-assess")).toBeNull();
+    expect(screen.getByRole("link", { name: /Let's talk/i })).toHaveAttribute(
       "href",
       "/assessment",
     );
     expect(
-      screen.getByRole("link", { name: /Book a Fit Review/i }),
+      screen.getByRole("link", { name: /Book a Business Operations Review/i }),
     ).toHaveAttribute("href", "/assessment");
     home.unmount();
 

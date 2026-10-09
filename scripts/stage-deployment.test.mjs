@@ -5,6 +5,26 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DEPLOYMENT_FILES, stageDeployment, verifyDeployment } from "./stage-deployment.mjs";
 
+test("deployment includes every relative source import and referenced stylesheet asset", async () => {
+  const files = new Set(DEPLOYMENT_FILES);
+  for (const file of DEPLOYMENT_FILES.filter((name) => /\.(tsx?|css|mjs)$/.test(name))) {
+    const source = await readFile(path.join(workspace, file), "utf8");
+    const imports = [...source.matchAll(/(?:from\s+|import\s*)["'](\.[^"']+)["']/g)];
+    for (const [, specifier] of imports) {
+      const base = path.posix.normalize(path.posix.join(path.posix.dirname(file), specifier));
+      assert.ok([base, `${base}.ts`, `${base}.tsx`, `${base}.js`, `${base}/index.ts`].some((name) => files.has(name)), `${file} imports unstaged ${specifier}`);
+    }
+    if (file.endsWith(".css")) {
+      for (const [, asset] of source.matchAll(/url\(["']?(\/[^"')]+)["']?\)/g)) {
+        assert.ok(files.has(`public${asset}`), `${file} references unstaged ${asset}`);
+      }
+    }
+    for (const [, asset] of source.matchAll(/["'](\/(?:brand|fonts)\/[^"']+\.(?:png|jpe?g|svg|webp|mp4|woff2?))["']/g)) {
+      assert.ok(files.has(`public${asset}`), `${file} references unstaged ${asset}`);
+    }
+  }
+});
+
 const workspace = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 async function fixture(t) {
   const parent = path.join(workspace, ".netlify", "stage-tests");

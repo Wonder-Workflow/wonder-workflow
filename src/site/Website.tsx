@@ -10,7 +10,9 @@ import {
 import { BrandLockup } from "./BrandLockup";
 import { DiagnosticIntakeForm } from "./DiagnosticIntake";
 import { DIAGNOSTIC_INTAKE_PATH } from "./diagnosticForm";
-import { HomepageShip, type HomeChrome } from "./HomepageShip";
+import EditorialHome from "./EditorialHome";
+import WorkflowReview from "./WorkflowReview";
+import { LaunchFilm } from "./LaunchFilm";
 import { captureCampaign, publicHref } from "./campaign";
 import {
   ASSESSMENT_META,
@@ -50,9 +52,10 @@ function NavLink(props: ComponentProps<typeof RouterNavLink>) {
 }
 export const pages: Record<string, [string, string]> = {
   "/": [HOME_TITLE, HOME_DESCRIPTION],
+  "/workflow-review": ["Free Business Operations Review", "Find where your team loses time, then save a short assessment and choose a time for a free 30-minute Business Operations Review."],
   "/services": [
-    "Operations Fit Review, diagnostic, and implementation",
-    "Start with a complimentary Operations Fit Review, then a paid diagnostic scoped after the review, implementation, and optional support. Software and vendor costs stay separate.",
+    "Business Operations Review, diagnostic, and implementation",
+    "Start with a complimentary Business Operations Review, then a paid diagnostic scoped after the review, implementation, and optional support. Software and vendor costs stay separate.",
   ],
   "/how-we-work": [
     "How We Map How Work Gets Done",
@@ -74,7 +77,7 @@ export const pages: Record<string, [string, string]> = {
   ],
   "/contact": [
     "Contact Wonder & Workflow",
-    "Contact Wonder&Workflow LLC about an Operations Fit Review, a project, or an existing inquiry.",
+    "Contact Wonder&Workflow LLC about a Business Operations Review, a project, or an existing inquiry.",
   ],
   ...searchPages,
 };
@@ -204,12 +207,12 @@ function Flow() {
     </div>
   );
 }
-function Home({ onChrome }: { onChrome?: (chrome: HomeChrome) => void }) {
-  return (
-    <div className="ww-home">
-      <HomepageShip onChrome={onChrome} />
-    </div>
-  );
+function Home() {
+  const [introComplete, setIntroComplete] = useState(false);
+  return <div className="ww-home">
+    <LaunchFilm onComplete={setIntroComplete} />
+    <EditorialHome ready={introComplete} />
+  </div>;
 }
 function PageHero({
   label,
@@ -589,7 +592,7 @@ function Start() {
         </div>
         <div>
           <span className="ww-step-label">2 / Complimentary · 30 minutes</span>
-          <h2>Book an {FIT_REVIEW_NAME}</h2>
+          <h2>Book a {FIT_REVIEW_NAME}</h2>
           <p>
             After the assessment is saved, the {FIT_REVIEW_NAME} calendar appears on
             the same page. Choose a time there. Together we review the result.
@@ -726,7 +729,7 @@ function Contact() {
   return (
     <>
       <PageHero label="Contact" title="Let's talk about" accent="your operations."
-        copy="Contact Wonder & Workflow about an Operations Fit Review, a project, or an existing inquiry." />
+        copy="Contact Wonder & Workflow about a Business Operations Review, a project, or an existing inquiry." />
       <section className="ww-contact-fit">
         <Eyebrow>{FIT_REVIEW_NAME}</Eyebrow>
         <h2>Assess your operations</h2>
@@ -739,7 +742,7 @@ function Contact() {
             Assess your operations <Arrow />
           </Link>
           <Link className="ww-text-link" to="/assessment">
-            Request an {FIT_REVIEW_NAME} <Arrow />
+            Request a {FIT_REVIEW_NAME} <Arrow />
           </Link>
         </div>
         <NextStepNote />
@@ -777,10 +780,6 @@ function NotFound() {
 export default function Website() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [homeChrome, setHomeChrome] = useState<HomeChrome>({
-    onMedia: false,
-    assessGlow: false,
-  });
   const main = useRef<HTMLElement>(null);
   const initial = useRef(true);
   const routePath = location.pathname.replace(/\/+$/, "") || "/";
@@ -788,8 +787,16 @@ export default function Website() {
   const isDiagnosticIntake =
     routePath === DIAGNOSTIC_INTAKE_PATH.replace(/\/+$/, "");
   useEffect(() => {
-    if (!isHome) setHomeChrome({ onMedia: false, assessGlow: false });
-  }, [isHome]);
+    if (!menuOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        document.querySelector<HTMLButtonElement>(".ww-menu-toggle")?.focus();
+      }
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
   useEffect(() => {
     captureCampaign(location.search);
     setMenuOpen(false);
@@ -823,33 +830,27 @@ export default function Website() {
         : `https://wonderworkflow.com${canonicalPath}/`;
     canonical.href = canonicalHref;
     applyStructuredData(canonicalPath);
-    window.scrollTo({ top: 0, behavior: "instant" });
+    const section = location.hash ? document.getElementById(location.hash.slice(1)) : null;
+    if (section) section.scrollIntoView({ behavior: "instant", block: "start" });
+    else window.scrollTo({ top: 0, behavior: "instant" });
     if (!initial.current) main.current?.focus({ preventScroll: true });
     initial.current = false;
-  }, [location.pathname, location.search]);
+  }, [location.pathname, location.search, location.hash]);
+  if (routePath === "/workflow-review") return <WorkflowReview />;
   return (
-    <div className="ww-site">
+    <div className="ww-site ww-editorial-site">
       <a className="ww-skip" href="#ww-main">
         Skip to content
       </a>
-      <header
-        className={
-          homeChrome.onMedia ? "ww-header ww-header-on-media" : "ww-header"
-        }
-      >
+      <header className="ww-header">
         <div className="ww-brand-block">
           <Link
             className="ww-wordmark"
             to="/"
             aria-label="Wonder & Workflow home"
           >
-            <BrandLockup variant={homeChrome.onMedia ? "ghost" : "paper"} />
+            <BrandLockup variant="paper" />
           </Link>
-          {isHome ? (
-            <h1 className="ww-quiet-h1" tabIndex={-1}>
-              {HOME_H1}
-            </h1>
-          ) : null}
         </div>
         <button
           className="ww-menu-toggle"
@@ -859,13 +860,9 @@ export default function Website() {
         >
           {menuOpen ? "Close −" : "Menu +"}
         </button>
-        {isDiagnosticIntake ? null : (
+        {isDiagnosticIntake || isHome ? null : (
           <Link
-            className={
-              !isHome || homeChrome.assessGlow
-                ? "ww-header-assess is-glow"
-                : "ww-header-assess"
-            }
+            className="ww-header-assess is-glow"
             to="/assessment"
           >
             {HEADER_ASSESS_LABEL} <span aria-hidden="true">↗</span>
@@ -876,31 +873,24 @@ export default function Website() {
           className={menuOpen ? "ww-nav ww-nav-open" : "ww-nav"}
           aria-label="Main navigation"
         >
-          <NavLink to="/" end>
-            Home
-          </NavLink>
-          {isHome ? (
-            <NavLink to="/services">{SEE_HOW_WE_WORK}</NavLink>
-          ) : (
+          {isHome ? <>
+            <Link to="/#who-we-help">Who we help</Link>
+            <Link to="/#our-approach">Our approach</Link>
+            <Link to="/#about-ian">About Ian</Link>
+            <Link className="ww-nav-cta" to="/assessment">Let's talk <Arrow /></Link>
+          </> : <>
+            <NavLink to="/" end>Home</NavLink>
             <NavLink to="/services">Services</NavLink>
-          )}
-          <NavLink to="/guides">Guides</NavLink>
-          <NavLink to="/how-we-work">How We Work</NavLink>
-          <NavLink to="/about">About</NavLink>
-          {isHome ? (
-            <a className="ww-nav-chat" href={CONTACT_MAILTO}>
-              {CHAT_WITH_US}
-            </a>
-          ) : isDiagnosticIntake ? null : (
-            <Link className="ww-nav-cta" to="/assessment">
-              Assess your operations <Arrow />
-            </Link>
-          )}
+            <NavLink to="/guides">Guides</NavLink>
+            <NavLink to="/how-we-work">How We Work</NavLink>
+            <NavLink to="/about">About</NavLink>
+            {isDiagnosticIntake ? null : <Link className="ww-nav-cta" to="/assessment">Assess your operations <Arrow /></Link>}
+          </>}
         </nav>
       </header>
       <main id="ww-main" ref={main} tabIndex={-1}>
         <Routes>
-          <Route index element={<Home onChrome={setHomeChrome} />} />
+          <Route index element={<Home />} />
           <Route path="services" element={<Services />} />
           {services.map(service => <Route key={service.slug} path={`services/${service.slug}`} element={<ServicePage service={service} />} />)}
           <Route path="guides" element={<GuidesIndex />} />

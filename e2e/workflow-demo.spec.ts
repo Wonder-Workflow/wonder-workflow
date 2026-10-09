@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 import { mkdir } from "node:fs/promises";
 
 test("homepage kills animated workflow theater and keeps the assessment CTA", async ({
@@ -12,8 +12,8 @@ test("homepage kills animated workflow theater and keeps the assessment CTA", as
     0,
   );
   await expect(page.locator(".ww-site h1")).toBeVisible();
-  await expect(page.locator(".ship-feel-hero")).toBeVisible();
-  await page.locator(".ww-header-assess").click();
+  await expect(page.locator(".ww-editorial-hero-visual")).toBeVisible();
+  await page.getByRole("link", { name: /Let's talk/i }).click();
   await expect(page).toHaveURL(/assessment$/);
 });
 
@@ -26,7 +26,7 @@ test("photography homepage remains readable on mobile and with reduced motion", 
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
     await expect(page.locator(".ww-site h1")).toBeVisible();
-    await expect(page.locator(".ship-feel-hero")).toBeVisible();
+    await expect(page.locator(".ww-editorial-hero-visual")).toBeVisible();
     await expect(page.locator("video")).toHaveCount(0);
     expect(
       await page.evaluate(
