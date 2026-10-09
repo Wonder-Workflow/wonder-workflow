@@ -57,6 +57,15 @@ const later = (overrides: Partial<IntakePacket> = {}) =>
   packet({ updatedAt: "2026-09-05T13:00:00Z", ...overrides });
 
 describe("normalized booking intake validation", () => {
+  it("rejects intake from the cancelled account and calendar", () => {
+    expect(() =>
+      parseIntakePacket({
+        ...packet(),
+        locationId: "sNxq4o3kG3iH5yoQ71Oq",
+        calendarId: "tFmtpPmm23VC7ygrKxvK",
+      }),
+    ).toThrow(/Invalid intake packet/);
+  });
   it("accepts JSON and exact 0–21 scores without rescaling", () => {
     for (const score of [0, 18, 21]) {
       const input = packet();

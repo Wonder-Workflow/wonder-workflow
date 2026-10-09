@@ -67,9 +67,7 @@ test("mobile navigation and campaign context reach the assessment", async ({
     page.getByRole("heading", { name: QUESTIONS[0].label, exact: true }),
   ).toBeVisible();
   await expect(page.getByText(/About 2 minutes/)).toBeVisible();
-  await expect(page).toHaveTitle(
-    "Operations Assessment | Wonder & Workflow",
-  );
+  await expect(page).toHaveTitle("Operations Assessment | Wonder & Workflow");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
     "https://wonderworkflow.com/assessment/",
@@ -92,11 +90,13 @@ test("request a diagnostic opens the short intake and leaves Fit Review CTAs on 
   ).toHaveAttribute("href", /\/assessment$/);
   await page.getByRole("link", { name: "Request a diagnostic" }).click();
   await expect(page).toHaveURL(/\/request-diagnostic\/?$/);
-  await expect(page.getByRole("heading", { level: 1, name: /Request a/i })).toBeVisible();
-  await expect(page.locator("#inline-fYq3Zvb80SesdYASeP96")).toHaveAttribute(
-    "src",
-    "https://api.wonderworkflow.com/widget/form/fYq3Zvb80SesdYASeP96",
-  );
+  await expect(
+    page.getByRole("heading", { level: 1, name: /Request a/i }),
+  ).toBeVisible();
+  await expect(page.locator(".ww-diagnostic iframe")).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: "Start your operations assessment" }),
+  ).toHaveAttribute("href", "/assessment");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
     "https://wonderworkflow.com/request-diagnostic/",
@@ -142,17 +142,22 @@ test("start, book, and contact send Fit Review traffic to the assessment", async
   await expect(
     page.getByRole("link", { name: "Request a Business Operations Review" }),
   ).toHaveAttribute("href", /\/assessment$/);
-  await page.getByRole("navigation", { name: "Main navigation" })
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
     .getByRole("link", { name: "Assess your operations" })
     .click();
   await expect(page).toHaveURL(/\/assessment$/);
 });
 
-test("approved homepage retains a primary review CTA after the intro", async ({ page }) => {
+test("approved homepage retains a primary review CTA after the intro", async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
   await expect(page.locator(".ww-launch-intro")).toHaveCount(0);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/shouldn.t need you for everything/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    /shouldn.t need you for everything/,
+  );
   await page.getByRole("link", { name: /Let's talk/i }).click();
   await expect(page).toHaveURL(/assessment$/);
 });
@@ -175,9 +180,15 @@ test("stage 1 SEO pages render and send the CTA to the assessment", async ({
     ],
   ] as const) {
     await page.goto(path);
-    await expect(page.getByRole("heading", { level: 1, name: heading })).toBeVisible();
     await expect(
-      page.locator(".ww-search-page header a.ww-button, .ww-search-cta a.ww-button").first(),
+      page.getByRole("heading", { level: 1, name: heading }),
+    ).toBeVisible();
+    await expect(
+      page
+        .locator(
+          ".ww-search-page header a.ww-button, .ww-search-cta a.ww-button",
+        )
+        .first(),
     ).toHaveAttribute("href", /\/assessment$/);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       "href",

@@ -178,9 +178,9 @@ describe("Remy / Business Operations Review sitewide", () => {
     expect(index).toContain("G-Q5FNTC3EXW");
     expect(index).toContain('data-widget-id="6aad8507aaad87c6c4b513a1"');
     expect(read("src/domain/assessment.ts")).toContain(
-      "https://api.leadconnectorhq.com/widget/booking/tFmtpPmm23VC7ygrKxvK",
+      "https://api.leadconnectorhq.com/widget/booking/XKr1JMqpBJtxUDzeXcUK",
     );
-    expect(ASSESSMENT_BOOKING_URL).toContain("tFmtpPmm23VC7ygrKxvK");
+    expect(ASSESSMENT_BOOKING_URL).toContain("XKr1JMqpBJtxUDzeXcUK");
     expect(read("src/main.tsx")).toContain("LegacyAssessment");
     expect(read("scripts/prerender-entry.tsx")).toContain("LegacyAssessment");
     expect(read("server/config.ts")).toMatch(/Never force WW_CRM_SYNC_ENABLED/);

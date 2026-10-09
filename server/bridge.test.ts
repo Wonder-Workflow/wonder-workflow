@@ -576,7 +576,7 @@ describe("durable assessment capture and CRM identity", () => {
       contact_saved: true,
       submission_id: "submission-test",
       booking_url:
-        "https://api.leadconnectorhq.com/widget/booking/tFmtpPmm23VC7ygrKxvK",
+        "https://api.leadconnectorhq.com/widget/booking/XKr1JMqpBJtxUDzeXcUK",
     });
     expect(
       h.store.writes.some((k) => k.startsWith("contact-submissions/")),
@@ -816,6 +816,29 @@ describe("booking association and protected inbox", () => {
     expect(data.packets[0].bookingStatus).toBe("cancelled");
     expect(data.packets[0].assessment).toBeDefined();
   });
+  it.each(["noshow", "no-show", "showed"] as const)(
+    "reconciles canonical %s without duplicating the assessment",
+    async (status) => {
+      const h = harness();
+      await h.assessment();
+      await h.booking();
+      h.advance(2000);
+      h.ghl.event.dateUpdated = new Date(TEST_NOW + 1000).toISOString();
+      h.ghl.event.appointmentStatus = status;
+      expect(await (await h.booking()).json()).toMatchObject({
+        status: "updated",
+      });
+      expect(await (await h.booking()).json()).toMatchObject({
+        status: "duplicate",
+      });
+      const data = await (await h.inbox(await h.login())).json();
+      expect(data.packets).toHaveLength(1);
+      expect(data.packets[0].bookingStatus).toBe(
+        status === "showed" ? "completed" : "no-show",
+      );
+      expect(data.packets[0].assessment).toBeDefined();
+    },
+  );
   it("ignores older canonical updates and rejects contact reassignment", async () => {
     const h = harness();
     await h.assessment();

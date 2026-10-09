@@ -4,14 +4,7 @@ import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import Website, { pages } from "./Website";
-import {
-  DIAGNOSTIC_EMBED_SCRIPT,
-  DIAGNOSTIC_FORM_ID,
-  DIAGNOSTIC_FORM_NAME,
-  DIAGNOSTIC_FORM_SRC,
-  DIAGNOSTIC_IFRAME_ID,
-  DIAGNOSTIC_INTAKE_PATH,
-} from "./diagnosticForm";
+import { DIAGNOSTIC_INTAKE_PATH } from "./diagnosticForm";
 
 function renderPath(path: string) {
   return render(
@@ -34,7 +27,10 @@ describe("main navigation", () => {
       const nav = screen.getByRole("navigation", { name: "Main navigation" });
       const [home] = within(nav).getAllByRole("link");
       expect(home).toHaveTextContent(path === "/" ? /^Who we help$/ : /^Home$/);
-      expect(home).toHaveAttribute("href", path === "/" ? "/#who-we-help" : "/");
+      expect(home).toHaveAttribute(
+        "href",
+        path === "/" ? "/#who-we-help" : "/",
+      );
       expect(
         screen.getByRole("link", { name: "Wonder & Workflow home" }),
       ).toHaveAttribute("href", "/");
@@ -71,9 +67,10 @@ describe("diagnostic short intake", () => {
     expect(
       screen.getByRole("link", { name: /Scope the first improvement/i }),
     ).toHaveAttribute("href", "/start");
-    expect(
-      screen.getByRole("link", { name: /^Assess$/ }),
-    ).toHaveAttribute("href", "/assessment");
+    expect(screen.getByRole("link", { name: /^Assess$/ })).toHaveAttribute(
+      "href",
+      "/assessment",
+    );
   });
 
   it("keeps the diagnostic form as the only primary action", () => {
@@ -85,16 +82,14 @@ describe("diagnostic short intake", () => {
         screen.queryByRole("link", { name: /Assess your operations/i }),
       ).toBeNull();
       expect(
-        screen.queryByRole("link", { name: /Book a Business Operations Review/i }),
+        screen.queryByRole("link", {
+          name: /Book a Business Operations Review/i,
+        }),
       ).toBeNull();
-      expect(document.getElementById(DIAGNOSTIC_IFRAME_ID)).toHaveAttribute(
-        "src",
-        DIAGNOSTIC_FORM_SRC,
-      );
-      expect(document.getElementById(DIAGNOSTIC_IFRAME_ID)).toHaveAttribute(
-        "data-form-id",
-        DIAGNOSTIC_FORM_ID,
-      );
+      expect(
+        screen.getByRole("link", { name: "Start your operations assessment" }),
+      ).toHaveAttribute("href", "/assessment");
+      expect(document.querySelector("iframe")).toBeNull();
       unmount();
     }
 
@@ -123,42 +118,19 @@ describe("diagnostic short intake", () => {
     ).toHaveAttribute("href", "/assessment");
   });
 
-  it("embeds the HighLevel short intake on the trailing-slash route", () => {
-    for (const path of ["/request-diagnostic", "/request-diagnostic/"]) {
-      const { unmount } = renderPath(path);
-      expect(
-        screen.getByRole("heading", { level: 1, name: "Request a diagnostic" }),
-      ).toBeVisible();
-      expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
-      expect(
-        document.querySelector(".ww-diagnostic")?.textContent?.replace(/\s+/g, " ").trim(),
-      ).toBe("Request a diagnostic");
-      expect(screen.getByRole("banner")).toBeVisible();
-      expect(screen.getByRole("contentinfo")).toBeVisible();
-      const frame = document.getElementById(DIAGNOSTIC_IFRAME_ID);
-      expect(frame).toHaveAttribute("src", DIAGNOSTIC_FORM_SRC);
-      expect(frame).toHaveAttribute("title", DIAGNOSTIC_FORM_NAME);
-      expect(frame).toHaveAttribute("data-form-id", DIAGNOSTIC_FORM_ID);
-      expect(frame).toHaveAttribute("data-layout", "{'id':'INLINE'}");
-      expect(frame).toHaveAttribute("data-trigger-type", "alwaysShow");
-      expect(frame).toHaveAttribute("data-activation-type", "alwaysActivated");
-      expect(frame).toHaveAttribute("data-deactivation-type", "neverDeactivate");
-      expect(frame).toHaveAttribute("data-form-name", DIAGNOSTIC_FORM_NAME);
-      expect(frame).toHaveAttribute("data-cookie-consent", "true");
-      expect(
-        document.querySelector(`script[src="${DIAGNOSTIC_EMBED_SCRIPT}"]`),
-      ).toBeTruthy();
-      expect(
-        document.querySelector('link[rel="canonical"]'),
-      ).toHaveAttribute(
-        "href",
-        "https://wonderworkflow.com/request-diagnostic/",
-      );
-      expect(document.body.textContent).not.toContain("\u2014");
-      expect(document.body.textContent).not.toMatch(/\$\d/);
-      expect(document.body.textContent).not.toMatch(/\/assessment/);
-      unmount();
-    }
+  it("preserves attribution and never embeds the cancelled account", () => {
+    renderPath("/request-diagnostic/?utm_source=partner&utm_campaign=review");
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Request a diagnostic" }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("link", { name: "Start your operations assessment" }),
+    ).toHaveAttribute(
+      "href",
+      "/assessment?utm_source=partner&utm_campaign=review",
+    );
+    expect(document.querySelector("iframe")).toBeNull();
+    expect(document.querySelector('script[src*="form_embed"]')).toBeNull();
   });
 
   it("registers trailing-slash metadata without pricing or an assessment redirect", () => {
@@ -166,7 +138,10 @@ describe("diagnostic short intake", () => {
     expect(pages["/request-diagnostic"]?.[1]).toBe("Request a diagnostic");
     expect(pages["/request-diagnostic"]?.[1]).not.toMatch(/\$\d/);
     expect(pages["/request-diagnostic"]?.[1]).not.toContain("\u2014");
-    const css = readFileSync(join(process.cwd(), "src/site/website.css"), "utf8");
+    const css = readFileSync(
+      join(process.cwd(), "src/site/website.css"),
+      "utf8",
+    );
     expect(css).toMatch(/--ww-paper:\s*#fafaf8/i);
     expect(css).toMatch(/--ww-ink:\s*#20232b/i);
     expect(css).toMatch(/--ww-accent:\s*#7ba1af/i);
